@@ -11,14 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150305181307) do
+ActiveRecord::Schema.define(version: 20150306160043) do
 
   create_table "admins", force: :cascade do |t|
     t.string   "name"
     t.string   "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "password_digest"
   end
+
+  add_index "admins", ["email"], name: "index_admins_on_email", unique: true
 
   create_table "entrants", force: :cascade do |t|
     t.integer  "player_id"
