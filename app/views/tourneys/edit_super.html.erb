@@ -1,0 +1,30 @@
+<head>
+   <meta charset="utf-8">
+   <title>jQuery UI Autocomplete functionality</title>
+   <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+   <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+   <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+   <!-- Javascript -->
+   <script>
+      $(function() {
+         var availableTutorials = [
+            "ActionScript",
+            "Boostrap",
+            "C",
+            "C++",
+         ];
+         $( "#automplete-1" ).autocomplete({
+            source: $('#players').data('url')
+         });
+      });
+   </script>
+</head>
+<h1>Editing Tourney</h1>
+
+<%= render 'form_super' %>
+
+<%= content_tag "div", id: "players", data: {url: Player.all.map(&:name) } do %>
+  Loading players...
+<% end %>
+<%= link_to 'Show', @tourney %> |
+<%= link_to 'Back', tourneys_path %>
