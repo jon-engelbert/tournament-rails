@@ -30,11 +30,7 @@ class AdminsController < ApplicationController
 
     respond_to do |format|
       if @admin.save
-        format.html
-        {
-          log_in @admin
-          redirect_to @admin, notice: 'Admin was successfully created.'
-        }
+        format.html { redirect_to @admin, notice: 'Admin was successfully created.'}
         format.json { render :show, status: :created, location: @admin }
       else
         format.html { render :new }
@@ -75,7 +71,6 @@ class AdminsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def admin_params
-      params.require(:admin).permit(:name, :email, :password,
-                                   :password_confirmation)
+      params.require(:admin).permit(:name, :email, :password, :password_confirmation)
     end
 end
