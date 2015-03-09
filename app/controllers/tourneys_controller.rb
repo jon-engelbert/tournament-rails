@@ -1,4 +1,5 @@
 class TourneysController < ApplicationController
+  before_action :logged_in_user, only: [:edit, :edit_super, :update, :destroy]
   before_action :set_tourney, only: [:show, :edit, :update, :destroy]
 
   # GET /tourneys

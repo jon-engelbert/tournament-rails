@@ -44,6 +44,8 @@ group :development, :test do
   gem 'spring'
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
+  gem 'guard'
+  gem 'guard-rspec'
 end
 
 group :production do
