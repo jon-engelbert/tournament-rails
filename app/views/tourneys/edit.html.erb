@@ -1,7 +1,35 @@
+<head>
+   <meta charset="utf-8">
+   <title>jQuery UI Autocomplete functionality</title>
+   <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+   <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+   <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+   <!-- Javascript -->
+   <script>
+      $(function() {
+         $( "#automplete-1" ).autocomplete({
+            source: $('#players').data('email')
+         });
+      });
+   </script>
+   <script>
+   $(document).ready(function(){
+      $("#addButton").click(function (e) {
+        e.preventDefault();
+        var selectedVal = $('#automplete-1').val();
+        $('#playerList').append('<li>'+selectedVal+'</li>')
+        $('#tourney_player_names').val($('#tourney_player_names').val() + selectedVal + ',');
+      });
+    });
+    </script>
 
+</head>
 <h1>Editing Tourney</h1>
 
-<%= render 'form' %>
+<%= render 'form_super' %>
 
+<%= content_tag "div", id: "players", data: {name: Player.all.map(&:name), email: Player.all.map(&:email) } do %>
+  Loading players...
+<% end %>
 <%= link_to 'Show', @tourney %> |
 <%= link_to 'Back', tourneys_path %>

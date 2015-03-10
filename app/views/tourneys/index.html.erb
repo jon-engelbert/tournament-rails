@@ -18,9 +18,9 @@
         <td><%= tourney.name %></td>
         <td><%= tourney.date %></td>
         <td><%= tourney.location %></td>
-        <td><%= link_to 'Show', tourney %></td>
-        <td><%= link_to 'Edit', edit_tourney_path(tourney) %></td>
-        <td><%= link_to 'Destroy', tourney, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', tourney if current_user%></td>
+        <td><%= link_to 'Edit', edit_tourney_path(tourney) if current_user && (current_user.id == tourney.user_id || current_user.admin?) %></td>
+        <td><%= link_to 'Destroy', tourney, method: :delete, data: { confirm: 'Are you sure?' } if current_user &&  (current_user.id == tourney.user_id || current_user.admin?) %></td>
       </tr>
     <% end %>
   </tbody>
@@ -28,4 +28,4 @@
 
 <br>
 
-<%= link_to 'New Tourney', new_tourney_path %>
+<%= link_to 'New Tourney', new_tourney_path if current_user %>

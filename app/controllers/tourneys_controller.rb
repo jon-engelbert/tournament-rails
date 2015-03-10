@@ -32,6 +32,7 @@ class TourneysController < ApplicationController
   # POST /tourneys.json
   def create
     @tourney = Tourney.new(tourney_params)
+    @tourney.owner_id = current_user.id
 
     respond_to do |format|
       if @tourney.save
@@ -48,6 +49,8 @@ class TourneysController < ApplicationController
   # PATCH/PUT /tourneys/1.json
   def update
     respond_to do |format|
+      puts "params"
+      puts params.inspect
       if @tourney.update(tourney_params)
         format.html { redirect_to @tourney, notice: 'Tourney was successfully updated.' }
         format.json { render :show, status: :ok, location: @tourney }
@@ -76,6 +79,15 @@ class TourneysController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def tourney_params
-      params.require(:tourney).permit(:name, :date, :location)
+      params.require(:tourney).permit(:name, :date, :location, :player_names)
+    end
+
+    # Confirms a logged-in user.
+    def logged_in_user
+      unless logged_in?
+        store_location
+        flash[:danger] = "Please log in."
+        redirect_to login_url
+      end
     end
 end

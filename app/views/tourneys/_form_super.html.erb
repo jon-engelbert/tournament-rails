@@ -26,13 +26,16 @@
   <div class="playerfield">
     <%= f.label 'player' %><br>
     <input id="automplete-1">
-    <button add>Add</button>
+    <button id="addButton">Add</button>
   </div>
-  <div class="list">
+  <div class="list" id="playerList">
     <label>Entrants</label>
-    <% @players.each do |player| %>
+    <% @tourney.players.each do |player| %>
       <li><%= player.name %></li>
     <% end %>
+  </div>
+  <div class="player_names" id="player_area">
+    <%= f.text_field 'player_names' %>
   </div>
 
   <div class="actions">
