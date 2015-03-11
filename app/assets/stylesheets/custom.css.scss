@@ -32,6 +32,10 @@ textarea {
   }
 }
 
+table {
+    border-collapse: separate;
+    border-spacing: 20px initial;
+}
 /* typography */
 
 h1, h2, h3, h4, h5, h6 {

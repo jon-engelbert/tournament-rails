@@ -1,5 +1,5 @@
 class TourneysController < ApplicationController
-  before_action :logged_in_user, only: [:edit, :edit_super, :update, :destroy]
+  before_action :logged_in_user, only: [:new, :edit, :edit_super, :update, :destroy, :create]
   before_action :set_tourney, only: [:show, :edit, :update, :destroy]
 
   # GET /tourneys
@@ -31,22 +31,20 @@ class TourneysController < ApplicationController
       @player_names += entrant.name
       @player_names += "\r\n"
     end
+  end
+
+  # GET /tourneys/1/brackets
+  def brackets
+    @tourney = Tourney.find(params[:id])
+    @players = Player.all()
+    @entrants = @tourney.players()
+    @pairs, @bye_player = @tourney.swiss_pairings_initial @entrants
+    puts "***************** pairs: #{@pairs.inspect}"
+    puts "***************** bye_player: #{@bye_player.inspect}"
     puts "*****************  entrant player_names #{@player_names}"
     puts "*****************   player_names #{@players.select("name").inspect}"
   end
 
-  # GET /tourneys/1/edit_super
-  def edit_super
-    @tourney = Tourney.find(params[:id])
-    @players = Player.all()
-    @entrants = @tourney.players()
-    @player_names = ''
-    @entrants.each do |entrant|
-      @player_names += "\r\n" if @player_names.present?
-      @player_names = entrant.name
-    end
-    puts "*****************  player_names #{@player_names}"
-  end
 
   # POST /tourneys
   # POST /tourneys.json

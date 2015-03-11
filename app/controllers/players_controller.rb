@@ -1,5 +1,6 @@
 class PlayersController < ApplicationController
   before_action :set_player, only: [:show, :edit, :update, :destroy]
+  before_action :logged_in_user, only: [:new, :edit, :edit_super, :update, :destroy, :create]
 
   # GET /players
   # GET /players.json
@@ -70,5 +71,14 @@ class PlayersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def player_params
       params.require(:player).permit(:name, :email)
+    end
+
+    # Confirms a logged-in user.
+    def logged_in_user
+      unless current_user.present?
+        store_location
+        flash[:danger] = "Please log in."
+        redirect_to login_url
+      end
     end
 end

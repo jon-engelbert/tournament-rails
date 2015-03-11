@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   resources :tourneys
   resources :tourneys do
     member do
-      get 'edit_super'
+      get 'brackets'
     end
   end
 
