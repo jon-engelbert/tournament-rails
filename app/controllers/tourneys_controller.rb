@@ -16,23 +16,43 @@ class TourneysController < ApplicationController
   # GET /tourneys/new
   def new
     @tourney = Tourney.new
+    @players = Player.all()
+    @entrants = nil
+    @player_names = ''
   end
 
   # GET /tourneys/1/edit
   def edit
+    @tourney = Tourney.find(params[:id])
+    @players = Player.all()
+    @entrants = @tourney.players()
+    @player_names = ''
+    @entrants.each do |entrant|
+      @player_names += entrant.name
+      @player_names += "\r\n"
+    end
+    puts "*****************  entrant player_names #{@player_names}"
+    puts "*****************   player_names #{@players.select("name").inspect}"
   end
 
   # GET /tourneys/1/edit_super
   def edit_super
     @tourney = Tourney.find(params[:id])
     @players = Player.all()
+    @entrants = @tourney.players()
+    @player_names = ''
+    @entrants.each do |entrant|
+      @player_names += "\r\n" if @player_names.present?
+      @player_names = entrant.name
+    end
+    puts "*****************  player_names #{@player_names}"
   end
 
   # POST /tourneys
   # POST /tourneys.json
   def create
     @tourney = Tourney.new(tourney_params)
-    @tourney.owner_id = current_user.id
+    @tourney.user_id = current_user.id
 
     respond_to do |format|
       if @tourney.save
@@ -49,9 +69,25 @@ class TourneysController < ApplicationController
   # PATCH/PUT /tourneys/1.json
   def update
     respond_to do |format|
-      puts "params"
-      puts params.inspect
+      puts "params: #{params.inspect}"
       if @tourney.update(tourney_params)
+        #store entrants
+        entrants = tourney_params[:player_names].split("\r\n")
+        puts entrants
+        entrants.each do |entrant_name|
+          entrant  = Player.find_by name: entrant_name
+          if entrant.present?
+            begin
+              @tourney.players << entrant
+            rescue Exception => exc
+               logger.error("Message for the log file #{exc.message}")
+               flash[:notice] = "Store error message"
+            end
+          else
+            error_msg = "Player #{entrant_name} not found: add this player first"
+            flash[:error] = error_msg
+          end
+        end
         format.html { redirect_to @tourney, notice: 'Tourney was successfully updated.' }
         format.json { render :show, status: :ok, location: @tourney }
       else

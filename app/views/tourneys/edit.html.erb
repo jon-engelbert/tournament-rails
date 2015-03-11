@@ -7,18 +7,19 @@
    <!-- Javascript -->
    <script>
       $(function() {
-         $( "#automplete-1" ).autocomplete({
-            source: $('#players').data('email')
-         });
+        $( "#automplete-1" ).autocomplete({
+           source: $('#players').data('name')
+        });
       });
    </script>
    <script>
    $(document).ready(function(){
+     $('#tourney_player_names').val($('#entrants').data('name'));
+
       $("#addButton").click(function (e) {
         e.preventDefault();
         var selectedVal = $('#automplete-1').val();
-        $('#playerList').append('<li>'+selectedVal+'</li>')
-        $('#tourney_player_names').val($('#tourney_player_names').val() + selectedVal + ',');
+        $("#tourney_player_names").val($("#tourney_player_names").val() + selectedVal + "\r\n");
       });
     });
     </script>
@@ -29,7 +30,7 @@
 <%= render 'form_super' %>
 
 <%= content_tag "div", id: "players", data: {name: Player.all.map(&:name), email: Player.all.map(&:email) } do %>
-  Loading players...
 <% end %>
+<%= content_tag "div", id: "entrants", data: {name: @player_names } do end %>
 <%= link_to 'Show', @tourney %> |
 <%= link_to 'Back', tourneys_path %>
