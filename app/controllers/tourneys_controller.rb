@@ -18,20 +18,44 @@ class TourneysController < ApplicationController
     @tourney = Tourney.new
     @players = Player.all()
     @entrants = nil
-    @player_names = ''
+    @players_remaining = Player.all()
+    @player_names = Player.pluck(:name)
+    @player_emails = Player.pluck(:email)
+    puts "******* player_name_list #{@player_names}"
+    puts "******* player_email_list #{@player_emails}"
+    @players_remaining_names = @player_names
+    @players_remaining_emails = @player_emails
+    puts "******* players_remaining_names #{@players_remaining_names}"
+    @entrant_names = ''
+    @entrant_emails = ''
   end
 
   # GET /tourneys/1/edit
   def edit
     @tourney = Tourney.find(params[:id])
-    @players = Player.all()
     @entrants = @tourney.players()
-    @player_names = ''
+    @players_remaining = Player.all() - @entrants
+    @player_names = Player.pluck(:name)
+    @player_emails = Player.pluck(:email)
+    puts "******* player_name_list #{@player_names}"
+    puts "******* player_email_list #{@player_emails}"
+    @players_remaining_names = @player_names - @tourney.players().pluck(:name)
+    @players_remaining_emails = @player_emails - @tourney.players().pluck(:email)
+    puts "******* players_remaining_names #{@players_remaining_names}"
+    @entrant_names = ''
+    @entrant_emails = ''
+    @entrant_name_list = @tourney.players().pluck(:name)
+    @entrant_email_list = @tourney.players().pluck(:email)
+    puts "******* entrant_name_list #{@entrant_name_list}"
     @entrants.each do |entrant|
-      @player_names += entrant.name
-      @player_names += "\r\n"
+      @entrant_names += entrant.name
+      @entrant_names += "\r\n"
+      @entrant_emails += entrant.email
+      @entrant_emails += "\r\n"
     end
-  end
+    puts "******* entrant_names #{@entrant_names}"
+    puts "******* entrant_emails #{@entrant_emails}"
+ end
 
   # GET /tourneys/1/brackets
   def brackets
@@ -39,9 +63,11 @@ class TourneysController < ApplicationController
     @players = Player.all()
     @entrants = @tourney.players()
     @pairs, @bye_player = @tourney.swiss_pairings_initial @entrants
+    @scores = [nil] * @pairs.size 
     puts "***************** pairs: #{@pairs.inspect}"
     puts "***************** bye_player: #{@bye_player.inspect}"
     puts "*****************  entrant player_names #{@player_names}"
+    puts "*****************  entrant player_emails #{@player_emails}"
     puts "*****************   player_names #{@players.select("name").inspect}"
   end
 
@@ -49,16 +75,31 @@ class TourneysController < ApplicationController
   # POST /tourneys
   # POST /tourneys.json
   def create
+    puts "******************** In Create *********************"
     @tourney = Tourney.new(tourney_params)
     @tourney.user_id = current_user.id
 
-    respond_to do |format|
-      if @tourney.save
-        format.html { redirect_to @tourney, notice: 'Tourney was successfully created.' }
-        format.json { render :show, status: :created, location: @tourney }
-      else
-        format.html { render :new }
-        format.json { render json: @tourney.errors, status: :unprocessable_entity }
+    if @tourney.save
+      names = tourney_params[:entrant_names].split("\r\n")
+      emails = tourney_params[:entrant_emails].split("\r\n")
+      entrants = names.zip(emails)
+      puts entrants
+      entrants.each do |name, email|
+        entrant  = Player.find_by name: name
+        if entrant.present?
+          begin
+            @tourney.players << entrant
+          rescue Exception => exc
+             logger.error("Message for the log file #{exc.message}")
+             flash[:notice] = "Store error message"
+          end
+        else
+          puts "********* name, email: #{name} #{email}"
+          entrant = Player.new({name: name, email: email})
+          puts "********* entrant #{entrant}"
+          entrant.save
+          @tourney.players << entrant
+        end
       end
     end
   end
@@ -70,10 +111,12 @@ class TourneysController < ApplicationController
       puts "params: #{params.inspect}"
       if @tourney.update(tourney_params)
         #store entrants
-        entrants = tourney_params[:player_names].split("\r\n")
+        names = tourney_params[:entrant_names].split("\r\n")
+        emails = tourney_params[:entrant_emails].split("\r\n")
+        entrants = names.zip(emails)
         puts entrants
-        entrants.each do |entrant_name|
-          entrant  = Player.find_by name: entrant_name
+        entrants.each do |name, email|
+          entrant  = Player.find_by name: name
           if entrant.present?
             begin
               @tourney.players << entrant
@@ -82,8 +125,11 @@ class TourneysController < ApplicationController
                flash[:notice] = "Store error message"
             end
           else
-            error_msg = "Player #{entrant_name} not found: add this player first"
-            flash[:error] = error_msg
+            puts "********* name, email: #{name} #{email}"
+            entrant = Player.new({name: name, email: email})
+            puts "********* entrant #{entrant}"
+            entrant.save
+            @tourney.players << entrant
           end
         end
         format.html { redirect_to @tourney, notice: 'Tourney was successfully updated.' }
@@ -113,7 +159,7 @@ class TourneysController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def tourney_params
-      params.require(:tourney).permit(:name, :date, :location, :player_names)
+      params.require(:tourney).permit(:name, :date, :location, :entrant_names, :entrant_emails)
     end
 
     # Confirms a logged-in user.

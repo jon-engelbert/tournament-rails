@@ -3,11 +3,10 @@ class Tourney < ActiveRecord::Base
   has_many :entrants
   has_many :players, through: :entrants
   belongs_to :users
-  attr_accessor :player_names
+  attr_accessor :entrant_names, :entrant_emails
 
   def swiss_pairings_initial(players)
     use_bye = players.size % 2 != 0
-    players.shuffle
     player_bye_id = nil
     if use_bye
       bye_player = players.sample
@@ -15,7 +14,7 @@ class Tourney < ActiveRecord::Base
     is_begin_pair = true
     pairs = []
     prev_player = nil
-    players.each do |player|
+    players.shuffle.each do |player|
       if player != bye_player
         if is_begin_pair
           prev_player = player
