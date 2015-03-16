@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :tourneys do
     member do
       get 'brackets'
+      post 'record_match'
     end
   end
 

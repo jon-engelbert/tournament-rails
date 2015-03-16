@@ -23,7 +23,7 @@
         e.preventDefault();
         var name = $('#automplete-1').val();
         var position = $.inArray(name, $('#players').data('name'));
-        var hostAddress= top.location.host.toString();        
+        var hostAddress= top.location.host.toString();
         if (position >= 0) {
           // find the corresponding email, add it to the list.
           var players = $('#players').data('list');
@@ -35,7 +35,7 @@
           $('#tourney_entrant_emails').val(entrantEmails);
         } else {
           // var url = "http://" + hostAddress + $('#newplayerlink').data('link');
-          // $(location).attr('href',url); 
+          // $(location).attr('href',url);
           $("#new_player").show();
           $('#player_name').val(name);
           $('#player_email').val('');

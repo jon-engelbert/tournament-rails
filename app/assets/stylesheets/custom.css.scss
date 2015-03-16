@@ -172,3 +172,18 @@ input {
   margin-top: 45px;
   @include box_sizing;
 }
+
+.popup{
+  border:5px solid #666;
+  padding:10px;
+  background:#3A3A3A;
+  position:absolute;
+  display:none;
+}
+#Edit_scores{
+  border:5px solid #666;
+  padding:10px;
+  background:#FFFFFF;
+  position:absolute;
+  display:none;
+}

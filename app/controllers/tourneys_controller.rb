@@ -63,12 +63,23 @@ class TourneysController < ApplicationController
     @players = Player.all()
     @entrants = @tourney.players()
     @pairs, @bye_player = @tourney.swiss_pairings_initial @entrants
-    @scores = [nil] * @pairs.size 
-    puts "***************** pairs: #{@pairs.inspect}"
+    @scores = [[nil],[nil],[nil]] * @pairs.size
+    @matches = @pairs.zip(@scores)
+    puts "***************** pairs_with_scores: #{@matches.inspect}"
     puts "***************** bye_player: #{@bye_player.inspect}"
     puts "*****************  entrant player_names #{@player_names}"
     puts "*****************  entrant player_emails #{@player_emails}"
     puts "*****************   player_names #{@players.select("name").inspect}"
+    puts "***************** tourney id #{@tourney.id}"
+  end
+
+  # POST /tourneys/:id/record_match
+  def record_match
+    puts "888888888888888 in record match, params: #{params}"
+    respond_to do |format|
+      format.json { render :json => @returnMember.to_json }
+    end
+
   end
 
 
