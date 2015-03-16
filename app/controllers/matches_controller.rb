@@ -37,6 +37,67 @@ class MatchesController < ApplicationController
     end
   end
 
+  # POST /matches/record
+  # def self.record # this doesn't work, route not found when class method
+  def record
+    puts "****************** in record match, params: #{params}"
+    record_results params
+  end
+
+  def record_results params
+    puts "****************** in record match, params: #{params}"
+    begin
+      player1id = Player.find_by(name: params['player1_name']).id
+      player2id = Player.find_by(name: params['player2_name']).id
+    rescue Exception => exc
+      logger.error("Message for the log file #{exc.message}")
+      flash[:notice] = "Store error message"
+    end
+    begin
+      puts "match find : #{player1id}, #{player2id}, #{params['tourney_id']}, #{params['round']}"
+      match = Match.find_by(player1_id: player1id, player2_id: player2id, tourney_id: params["tourney_id"], round: params['round'])
+    rescue Exception => exc
+       puts "match not found: #{player1id}, #{player2id}, #{params['tourney_id']}, #{params['round']}"
+   end
+
+    if match.nil?
+      begin
+        match = Match.find_by(player1_id: player1id, player2_id: player2id, tourney_id: params['tourney_id'], round: -1)
+      rescue Exception => exc
+       puts "match not found: #{player1id}, #{player2id}, #{params['tourney_id']}, -1}"
+      end
+    end
+
+    if match.present?
+      match.player1_score = params[:player1_score]
+      match.player2_score = params[:player2_score]
+      match.ties = params[:ties]
+      match.round = params[:round]
+      match.save
+    else
+      params['player1_id'] = player1id
+      params['player2_id'] = player2id
+      params.delete :player1_name
+      params.delete :player2_name
+      params['match'] = params
+      puts "****************** in record match, params: #{match_params}"
+      match = Match.create(match_params)
+      match.save
+   end
+    respond_to do |format|
+      format.json { render :json => @returnMember.to_json }
+    end
+  end
+
+  # POST /matches/record_all
+  # def self.record # this doesn't work, route not found when class method
+  def record_all
+    puts "****************** in record_all match, params: #{params}"
+    params.each do |match_params| 
+      record_results match_params
+    end
+  end
+
   # PATCH/PUT /matches/1
   # PATCH/PUT /matches/1.json
   def update
@@ -51,7 +112,7 @@ class MatchesController < ApplicationController
     end
   end
 
-  # DELETE /matches/1
+# DELETE /matches/1
   # DELETE /matches/1.json
   def destroy
     @match.destroy

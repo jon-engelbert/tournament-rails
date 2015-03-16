@@ -21,11 +21,11 @@ class TourneysController < ApplicationController
     @players_remaining = Player.all()
     @player_names = Player.pluck(:name)
     @player_emails = Player.pluck(:email)
-    puts "******* player_name_list #{@player_names}"
-    puts "******* player_email_list #{@player_emails}"
     @players_remaining_names = @player_names
     @players_remaining_emails = @player_emails
-    puts "******* players_remaining_names #{@players_remaining_names}"
+    # puts "******* player_name_list #{@player_names}"
+    # puts "******* player_email_list #{@player_emails}"
+    # puts "******* players_remaining_names #{@players_remaining_names}"
     @entrant_names = ''
     @entrant_emails = ''
   end
@@ -37,24 +37,20 @@ class TourneysController < ApplicationController
     @players_remaining = Player.all() - @entrants
     @player_names = Player.pluck(:name)
     @player_emails = Player.pluck(:email)
-    puts "******* player_name_list #{@player_names}"
-    puts "******* player_email_list #{@player_emails}"
     @players_remaining_names = @player_names - @tourney.players().pluck(:name)
     @players_remaining_emails = @player_emails - @tourney.players().pluck(:email)
-    puts "******* players_remaining_names #{@players_remaining_names}"
     @entrant_names = ''
     @entrant_emails = ''
     @entrant_name_list = @tourney.players().pluck(:name)
     @entrant_email_list = @tourney.players().pluck(:email)
-    puts "******* entrant_name_list #{@entrant_name_list}"
     @entrants.each do |entrant|
       @entrant_names += entrant.name
       @entrant_names += "\r\n"
       @entrant_emails += entrant.email
       @entrant_emails += "\r\n"
     end
-    puts "******* entrant_names #{@entrant_names}"
-    puts "******* entrant_emails #{@entrant_emails}"
+    # puts "******* entrant_names #{@entrant_names}"
+    # puts "******* entrant_emails #{@entrant_emails}"
  end
 
   # GET /tourneys/1/brackets
@@ -62,31 +58,44 @@ class TourneysController < ApplicationController
     @tourney = Tourney.find(params[:id])
     @players = Player.all()
     @entrants = @tourney.players()
-    @pairs, @bye_player = @tourney.swiss_pairings_initial @entrants
-    @scores = [[nil],[nil],[nil]] * @pairs.size
-    @matches = @pairs.zip(@scores)
-    puts "***************** pairs_with_scores: #{@matches.inspect}"
-    puts "***************** bye_player: #{@bye_player.inspect}"
-    puts "*****************  entrant player_names #{@player_names}"
-    puts "*****************  entrant player_emails #{@player_emails}"
-    puts "*****************   player_names #{@players.select("name").inspect}"
-    puts "***************** tourney id #{@tourney.id}"
-  end
-
-  # POST /tourneys/:id/record_match
-  def record_match
-    puts "888888888888888 in record match, params: #{params}"
-    respond_to do |format|
-      format.json { render :json => @returnMember.to_json }
+    @matches = []
+    @match_records = Match.where(tourney: @tourney.id, round:-1)
+    if (@match_records.empty?) 
+      pairs, @bye_player = @tourney.swiss_pairings_initial @entrants
+      player1, player2 = pairs.transpose
+      scores1, scores2, ties = [0] * pairs.size, [0] * pairs.size, [0] * pairs.size
+      round = [-1] * pairs.size
+      @match_data = player1.zip(player2, scores1, scores2, ties, round)
+      @match_data.each do |data|
+        parms = {tourney_id: @tourney.id, player1_id: data[0].id, player2_id: data[1].id, player1_score: data[2], player2_score: data[3], ties: data[4], round: data[5]}
+        match = Match.new parms
+        match.save
+        match.player1_name = data[0].name
+        match.player2_name = data[1].name
+        @matches << match
+      end
+    else
+      @match_records.each do |match|
+        match.player1_name = Player.find_by(id: match.player1_id).name
+        match.player2_name = Player.find_by(id: match.player2_id).name
+        @matches << match
+      end
     end
-
+    # puts "******************* match_count: #{@matches.count}"
+    # puts "***************** @match_data: #{player1}"
+    # puts "***************** scores1: #{scores1}"
+    # puts "***************** matches: #{@matches.inspect}"
+    # puts "***************** bye_player: #{@bye_player.inspect}"
+    # puts "*****************  entrant player_names #{@player_names}"
+    # puts "*****************  entrant player_emails #{@player_emails}"
+    # puts "*****************   player_names #{@players.select("name").inspect}"
+    # puts "***************** tourney id #{@tourney.id}"
   end
 
 
   # POST /tourneys
   # POST /tourneys.json
   def create
-    puts "******************** In Create *********************"
     @tourney = Tourney.new(tourney_params)
     @tourney.user_id = current_user.id
 
@@ -112,6 +121,9 @@ class TourneysController < ApplicationController
           @tourney.players << entrant
         end
       end
+      redirect_to @tourney, notice: 'Tourney was successfully created.' 
+    else
+      render :new 
     end
   end
 
@@ -136,9 +148,7 @@ class TourneysController < ApplicationController
                flash[:notice] = "Store error message"
             end
           else
-            puts "********* name, email: #{name} #{email}"
             entrant = Player.new({name: name, email: email})
-            puts "********* entrant #{entrant}"
             entrant.save
             @tourney.players << entrant
           end

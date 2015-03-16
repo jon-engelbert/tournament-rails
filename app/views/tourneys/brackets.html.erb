@@ -3,56 +3,21 @@
 <div class="player_names" id="player_area">
   <% i = 0 %>
   <% round = 1 %>
-  <% @matches.each do |pair, scores| %>
+  <% @matches.each do |match| %>
     <section id= "match" data-match= "<%= i %>">
-      <label for="<%= pair[0].name %>"> <%= pair[0].name %> </label>
+      <label for="<%= match.player1_name %>"> <%= match.player1_name %> </label>
       vs
-      <label for="<%= pair[1].name %>"> <%= pair[1].name %> </label>
+      <label for="<%= match.player2_name %>"> <%= match.player2_name %> </label>
       <br>
       <a href="#" class="editMatchButton"
         id="editMatch"
-        data-player1name="<%= pair[0].name%>"
-        data-player2name="<%= pair[1].name%>"
-        data-player1wins="<%= scores[0]%>"
-        data-player2wins="<%= scores[1]%>"
-        data-ties="<%= scores[2]%>">
+        data-player1name="<%= match.player1_name%>"
+        data-player2name="<%= match.player2_name%>"
+        data-player1wins="<%= match.player1_score%>"
+        data-player2wins="<%= match.player2_score%>"
+        data-ties="<%= match.ties%>"
+        data-round="<%= match.round %>">
         Edit Match Results</a>
-      <!-- <div class="edit_scores" id= "Edit_<%=pair[0].name%>_<%=pair[1].name%>" style="display: none;">
-        <%= form_tag(record_match_tourney_path(@tourney), method: :post, remote: true) %>
-        <div class="field">
-          <%= label_tag :player1 %><br>
-          <input type=text name="player1_<%=pair[0].name%>_<%=pair[1].name%>" id="player1_<%=pair[0].name%>_<%=pair[1].name%>"
-            value= <%=pair[0].name%>>
-        </div>
-        <div class="field">
-          <%= label_tag :player2 %><br>
-          <input type=text name="player2_<%=pair[0].name%>_<%=pair[1].name%>" id="player2_<%=pair[0].name%>_<%=pair[1].name%>"
-            value= <%=pair[1].name%>>
-        </div>
-        <div class="field">
-          <%= label_tag :player1_wins %><br>
-          <input type=number name="player1_wins_<%=pair[0].name%>_<%=pair[1].name%>" id="player1_wins_<%=pair[0].name%>_<%=pair[1].name%>"
-            value= @pairs_with_scores[match_num][2]>
-        </div>
-        <div class="field">
-          <%= label_tag :player2_wins %><br>
-          <input type=number name="player2_wins_<%=pair[0].name%>_<%=pair[1].name%>" id="player1_wins_<%=pair[0].name%>_<%=pair[1].name%>"
-            value= @pairs_with_scores[match_num][2]>
-        </div>
-        <div class="field">
-          <%= label_tag :ties %><br>
-          <input type=number name="ties_<%=pair[0].name%>_<%=pair[1].name%>" id="ties_<%=pair[0].name%>_<%=pair[1].name%>"
-            value= @pairs_with_scores[match_num][4]>
-        </div>
-        <input type=number name="tourney_id" id="tourneyid_<%=pair[0].name%>_<%=pair[1].name%>"
-          style="display: none;" value= @tourney.id>
-        <div class="actions">
-          <%= submit_tag "Record Match Results" %>
-        </div> -->
-      <!-- </div> -->
-
-
-      <!-- <a href="#" id='edit_match' data-player1="<%= pair[0].name %>" data-player2="<%= pair[1].name %>">Edit</a> -->
     </section>
 
     <br>
@@ -66,7 +31,7 @@
   <% end %>
 </div>
 <div class="popup" id= "Edit_scores" style="display: none;">
-  <%= form_tag(record_match_tourney_path(@tourney), method: :post, remote: true) %>
+  <%= form_tag(record_match_path(0), method: :post, remote: true) %>
   <div class="field">
     <%= label_tag :player1 %><br>
     <input type=text name="player1_name" id="player1_name"
@@ -79,12 +44,12 @@
   </div>
   <div class="field">
     <%= label_tag :player1_wins %><br>
-    <input type=number name="player1_wins" id="player1_wins"
+    <input type=number name="player1_score" id="player1_wins"
       >
   </div>
   <div class="field">
     <%= label_tag :player2_wins %><br>
-    <input type=number name="player2_wins" id="player2_wins"
+    <input type=number name="player2_score" id="player2_wins"
       >
   </div>
   <div class="field">
@@ -94,11 +59,12 @@
   </div>
   <input type=number name="tourney_id" id="tourneyid" value= <%=@tourney.id%>
     style="display: none;" >
-    <input type=number name="round" id="round" value= <%=round%>
-      style="display: none;" >
+  <input type=number name="round" id="round" 
+    style="display: none;" >
 
   <div class="actions">
     <%= submit_tag "Record Match Results" %>
+    <%= button_tag "Cancel",:type => 'button',:class => "cancelEdit" %>  
   </div>
 </div>
 

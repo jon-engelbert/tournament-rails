@@ -9,13 +9,16 @@ Rails.application.routes.draw do
   post   'login'   => 'sessions#create'
   delete 'logout'  => 'sessions#destroy'
 
-  resources :matches
+  resources :matches do
+    member do
+      post 'record'
+    end
+  end
 
   resources :tourneys
   resources :tourneys do
     member do
       get 'brackets'
-      post 'record_match'
     end
   end
 
