@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :tourneys do
     member do
       get 'brackets'
+      get 'standings'
     end
   end
 

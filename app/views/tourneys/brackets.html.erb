@@ -2,13 +2,21 @@
 
 <div class="player_names" id="player_area">
   <% i = 0 %>
-  <% round = 1 %>
-  <% @matches.each do |match| %>
-    <section id= "match" data-match= "<%= i %>">
+  <% round = 0 %>
+  <% @matches.select {|match| match.round = round}.each do |match| %>
+    <section id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>">
       <label for="<%= match.player1_name %>"> <%= match.player1_name %> </label>
       vs
       <label for="<%= match.player2_name %>"> <%= match.player2_name %> </label>
       <br>
+    </section>
+    <input type=text id= "score_<%=match.player1_name%>_<%=match.player2_name%>" value=
+      "<% if match.player1_score + match.player2_score + match.ties > 0 %>
+<%=match.player1_score%> - <%=match.player2_score%><% end %><% if match.ties > 0 %>  (<%=match.ties%>) 
+      <% end %>" readonly
+      >
+    <br>
+    </section>
       <a href="#" class="editMatchButton"
         id="editMatch"
         data-player1name="<%= match.player1_name%>"
@@ -18,8 +26,6 @@
         data-ties="<%= match.ties%>"
         data-round="<%= match.round %>">
         Edit Match Results</a>
-    </section>
-
     <br>
     <br>
     <% i += 1 %>
@@ -28,10 +34,24 @@
     <label for="<%= @bye_player.name %>"> <%= @bye_player.name %> </label>
     bye
     <br>
+    <br>
   <% end %>
 </div>
+
+<div id="nextRoundButton">
+  <%= form_tag(brackets_tourney_path(round+1), method: :post, remote: true) do %>
+  <div class="actions">
+    <%= submit_tag "Generate Next Round" %>
+  </div>
+  <% end %>
+</div>
+
+<div id="AJAX_Results">
+</div>
+
+
 <div class="popup" id= "Edit_scores" style="display: none;">
-  <%= form_tag(record_match_path(0), method: :post, remote: true) %>
+  <%= form_tag(record_match_path(0), method: :post, remote: true) do %>
   <div class="field">
     <%= label_tag :player1 %><br>
     <input type=text name="player1_name" id="player1_name"
@@ -66,6 +86,7 @@
     <%= submit_tag "Record Match Results" %>
     <%= button_tag "Cancel",:type => 'button',:class => "cancelEdit" %>  
   </div>
+  <% end %>
 </div>
 
 

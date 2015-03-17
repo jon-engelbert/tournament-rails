@@ -46,9 +46,11 @@ class MatchesController < ApplicationController
 
   def record_results params
     puts "****************** in record match, params: #{params}"
+    player1name = params['player1_name']
+    player2name = params['player2_name']
     begin
-      player1id = Player.find_by(name: params['player1_name']).id
-      player2id = Player.find_by(name: params['player2_name']).id
+      player1id = Player.find_by(name: player1name).id
+      player2id = Player.find_by(name: player2name).id
     rescue Exception => exc
       logger.error("Message for the log file #{exc.message}")
       flash[:notice] = "Store error message"
@@ -85,7 +87,10 @@ class MatchesController < ApplicationController
       match.save
    end
     respond_to do |format|
-      format.json { render :json => @returnMember.to_json }
+      match_hash = match.as_json
+      match_hash['player1_name'] = player1name
+      match_hash['player2_name'] = player2name
+      format.json { render :json => match_hash.to_json }
     end
   end
 

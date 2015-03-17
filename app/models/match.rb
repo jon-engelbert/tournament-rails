@@ -5,7 +5,7 @@ class Match < ActiveRecord::Base
   def record_results params
 	puts "****************** in record match, params: #{params}"
 	begin
-	  match = Match.find(player2id: player1id, player2id: player2id, tourney_id: params['tourney_id'], round: params['round'])
+	  match = Match.find(player1id: player1id, player2id: player2id, tourney_id: params['tourney_id'], round: params['round'])
 	rescue Exception => exc
 	end
 

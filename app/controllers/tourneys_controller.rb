@@ -57,14 +57,28 @@ class TourneysController < ApplicationController
   def brackets
     @tourney = Tourney.find(params[:id])
     @players = Player.all()
-    @entrants = @tourney.players()
+    match_player_ids = []
+    match_records = Match.where(tourney: @tourney.id).where("round <= 0")
+    match_records.each do |match|
+      match_player_ids << match.player1_id
+      match_player_ids << match.player2_id
+    end
+
+    @entrants_unmatched = []
+    @tourney.players.each do |entrant|
+      if !match_player_ids.include? entrant.id 
+        @entrants_unmatched << entrant
+      end
+    end
+
+    # @entrants = @tourney.players()
     @matches = []
-    @match_records = Match.where(tourney: @tourney.id, round:-1)
-    if (@match_records.empty?) 
-      pairs, @bye_player = @tourney.swiss_pairings_initial @entrants
-      player1, player2 = pairs.transpose
-      scores1, scores2, ties = [0] * pairs.size, [0] * pairs.size, [0] * pairs.size
-      round = [-1] * pairs.size
+    @match_records = Match.where(tourney: @tourney.id, round: 0)
+    pairs, @bye_player = @tourney.swiss_pairings_initial @entrants_unmatched
+    player1, player2 = pairs.transpose
+    scores1, scores2, ties = [0] * pairs.size, [0] * pairs.size, [0] * pairs.size
+    round = [0] * pairs.size
+    if player1.present?
       @match_data = player1.zip(player2, scores1, scores2, ties, round)
       @match_data.each do |data|
         parms = {tourney_id: @tourney.id, player1_id: data[0].id, player2_id: data[1].id, player1_score: data[2], player2_score: data[3], ties: data[4], round: data[5]}
@@ -74,12 +88,11 @@ class TourneysController < ApplicationController
         match.player2_name = data[1].name
         @matches << match
       end
-    else
-      @match_records.each do |match|
-        match.player1_name = Player.find_by(id: match.player1_id).name
-        match.player2_name = Player.find_by(id: match.player2_id).name
-        @matches << match
-      end
+    end
+    @match_records.each do |match|
+      match.player1_name = Player.find_by(id: match.player1_id).name
+      match.player2_name = Player.find_by(id: match.player2_id).name
+      @matches << match
     end
     # puts "******************* match_count: #{@matches.count}"
     # puts "***************** @match_data: #{player1}"
@@ -92,6 +105,48 @@ class TourneysController < ApplicationController
     # puts "***************** tourney id #{@tourney.id}"
   end
 
+  # GET /standings
+  # GET /standings.json
+  def standings
+    matches = []
+    standings = []
+    @tourney = Tourney.find(params[:id])
+    players = @tourney.players
+
+    match_records = @tourney.matches
+    match_records.each do |match|
+      matches << match
+      puts "match #{match.inspect}"
+    end
+
+    player1records = []
+    players.each do |player|
+      puts "player #{player.inspect}"
+      playermatches = matches.select {|match| match.player1_id == player.id}
+      playermatchesRev = matches.select {|match| match.player2_id == player.id}
+      playermatchesRev.each do |match|
+        tempLosses = match.player1_score
+        match.player1_score = match.player2_score
+        match.player2_score = tempLosses
+        playermatches << match
+      end
+      match_wins = playermatches.count {|match| match.player1_score > match.player2_score}
+      match_losses = playermatches.count {|match| match.player1_score < match.player2_score}
+      match_ties = playermatches.count {|match| match.player1_score == match.player2_score}
+      match_points = 3*match_wins + match_ties
+      standing = {player_id: player.id, name: player.name, wins: match_wins, losses: match_losses, ties: match_ties, points: match_points}
+      puts "standing #{standing}"
+      standings << standing
+    end
+    @player_standings = standings
+
+    # player1matches = matches   #.select("Player.id as player_id, player.name as name, match.player1_score as wins, match.player2_score as losses, match.ties as ties").order(name: :desc)
+    # puts "player1s.inspect #{player1s.inspect}"
+    # player2s = Player.select("player.id as player_id, player.name as name, matches.player2_score as wins, matches.player1_score as losses, matches.ties as ties").joins("LEFT OUTER JOIN matches ON player_id= matches.player2_id").order(name: :desc)
+    # players = player1s.union(player2s)
+    # @player_standings = players.select("player_id as id, name, count(case when wins > losses then 1 end) as match_wins, count(case when wins < losses then 1 end) as match_losses, count(case when wins = losses then 1 end) as match_ties, sum(wins) as game_wins, sum(losses) as game_losses, sum(ties) as game_ties").group_by(:player_id, :name).order(:match_wins)
+
+  end
 
   # POST /tourneys
   # POST /tourneys.json

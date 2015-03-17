@@ -22,6 +22,7 @@
         <td><%= link_to 'Edit', edit_tourney_path(tourney) if current_user && (current_user.id == tourney.user_id || current_user.admin?) %></td>
         <td><%= link_to 'Destroy', tourney, method: :delete, data: { confirm: 'Are you sure?' } if current_user &&  (current_user.id == tourney.user_id || current_user.admin?) %></td>
         <td><%= link_to 'Brackets', brackets_tourney_path(tourney) %></td>
+        <td><%= link_to 'Standings', standings_tourney_path(tourney) %></td>
       </tr>
     <% end %>
   </tbody>
