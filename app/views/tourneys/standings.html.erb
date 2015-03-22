@@ -2,22 +2,25 @@
 <div class="player_names" id="player_area">
   <% i = 0 %>
   <table>
-  	<tr> 
+  	<tr>
   <td>name</td>
   <td>wins</td>
   <td>losses</td>
   <td>ties</td>
+  <td># matches</td>
   <td>points</td>
+  <td>win %</td>
   </tr>
   	<br>
-  	<%=@player_standings[0]['name']%>
   <% @player_standings.each do |entrant| %>
-  <tr> 
+  <tr>
   <td><%=entrant[:name]%></td>
   <td><%=entrant[:wins]%></td>
   <td><%=entrant[:losses]%></td>
   <td><%=entrant[:ties]%></td>
+  <td><%=entrant[:total_matches]%></td>
   <td><%=entrant[:points]%></td>
+  <td><%=entrant[:win_pct]%></td>
   </tr>
   <%end%>
 </table>

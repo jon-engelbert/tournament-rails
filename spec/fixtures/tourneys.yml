@@ -1,0 +1,10 @@
+mtg1:
+  name: MTG1
+  location: my house
+  date: <%= Time.zone.now %>
+#  user: :michael
+
+mtg2:
+  name: MTG2
+  location: avi's house
+  date: <%= Time.zone.now %>

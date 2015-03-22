@@ -1,3 +1,5 @@
+#require 'tourney_service.rb'
+
 class TourneysController < ApplicationController
   before_action :logged_in_user, only: [:new, :edit, :edit_super, :update, :destroy, :create]
   before_action :set_tourney, only: [:show, :edit, :update, :destroy]
@@ -49,103 +51,46 @@ class TourneysController < ApplicationController
       @entrant_emails += entrant.email
       @entrant_emails += "\r\n"
     end
-    # puts "******* entrant_names #{@entrant_names}"
-    # puts "******* entrant_emails #{@entrant_emails}"
+    puts "******* entrant_names #{@entrant_names}"
+    puts "******* entrant_emails #{@entrant_emails}"
+    puts "******* players_remaining_names #{@players_remaining_names}"
  end
+
+  # GET /tourneys/1/brackets_next
+  def brackets_next
+    # in response to user clicking on "generate next round".
+    # if current round is complete, then proceed.
+    @tourney = Tourney.find(params[:id])
+    TourneyService.generate_brackets_next params[:id]
+    @matches, @bye_player = @tourney.brackets
+    @max_round = Match.where(tourney: params[:id]).maximum(:round)
+    @max_round = 0 if @max_round.nil?
+    render :brackets
+  end
 
   # GET /tourneys/1/brackets
   def brackets
     @tourney = Tourney.find(params[:id])
-    @players = Player.all()
-    match_player_ids = []
-    match_records = Match.where(tourney: @tourney.id).where("round <= 0")
-    match_records.each do |match|
-      match_player_ids << match.player1_id
-      match_player_ids << match.player2_id
-    end
+    @matches, @bye_player = @tourney.brackets
+    @max_round = Match.where(tourney: params[:id]).maximum(:round)
+    @max_round = 0 if @max_round.nil?
+    puts "**************** matches: #{@matches.inspect}"
+    puts "**************** max_round: #{@max_round}"
+    puts "**************** bye_player: #{@bye_player}"
+  end
 
-    @entrants_unmatched = []
-    @tourney.players.each do |entrant|
-      if !match_player_ids.include? entrant.id 
-        @entrants_unmatched << entrant
-      end
-    end
-
-    # @entrants = @tourney.players()
-    @matches = []
-    @match_records = Match.where(tourney: @tourney.id, round: 0)
-    pairs, @bye_player = @tourney.swiss_pairings_initial @entrants_unmatched
-    player1, player2 = pairs.transpose
-    scores1, scores2, ties = [0] * pairs.size, [0] * pairs.size, [0] * pairs.size
-    round = [0] * pairs.size
-    if player1.present?
-      @match_data = player1.zip(player2, scores1, scores2, ties, round)
-      @match_data.each do |data|
-        parms = {tourney_id: @tourney.id, player1_id: data[0].id, player2_id: data[1].id, player1_score: data[2], player2_score: data[3], ties: data[4], round: data[5]}
-        match = Match.new parms
-        match.save
-        match.player1_name = data[0].name
-        match.player2_name = data[1].name
-        @matches << match
-      end
-    end
-    @match_records.each do |match|
-      match.player1_name = Player.find_by(id: match.player1_id).name
-      match.player2_name = Player.find_by(id: match.player2_id).name
-      @matches << match
-    end
-    # puts "******************* match_count: #{@matches.count}"
-    # puts "***************** @match_data: #{player1}"
-    # puts "***************** scores1: #{scores1}"
-    # puts "***************** matches: #{@matches.inspect}"
-    # puts "***************** bye_player: #{@bye_player.inspect}"
-    # puts "*****************  entrant player_names #{@player_names}"
-    # puts "*****************  entrant player_emails #{@player_emails}"
-    # puts "*****************   player_names #{@players.select("name").inspect}"
-    # puts "***************** tourney id #{@tourney.id}"
+  # GET /tourneys/1/brackets_initial
+  def brackets_initial
+    @tourney = Tourney.find(params[:id])
+    @matches, @bye_player = TourneyService.generate_brackets_initial params[:id]
   end
 
   # GET /standings
   # GET /standings.json
+
   def standings
-    matches = []
-    standings = []
     @tourney = Tourney.find(params[:id])
-    players = @tourney.players
-
-    match_records = @tourney.matches
-    match_records.each do |match|
-      matches << match
-      puts "match #{match.inspect}"
-    end
-
-    player1records = []
-    players.each do |player|
-      puts "player #{player.inspect}"
-      playermatches = matches.select {|match| match.player1_id == player.id}
-      playermatchesRev = matches.select {|match| match.player2_id == player.id}
-      playermatchesRev.each do |match|
-        tempLosses = match.player1_score
-        match.player1_score = match.player2_score
-        match.player2_score = tempLosses
-        playermatches << match
-      end
-      match_wins = playermatches.count {|match| match.player1_score > match.player2_score}
-      match_losses = playermatches.count {|match| match.player1_score < match.player2_score}
-      match_ties = playermatches.count {|match| match.player1_score == match.player2_score}
-      match_points = 3*match_wins + match_ties
-      standing = {player_id: player.id, name: player.name, wins: match_wins, losses: match_losses, ties: match_ties, points: match_points}
-      puts "standing #{standing}"
-      standings << standing
-    end
-    @player_standings = standings
-
-    # player1matches = matches   #.select("Player.id as player_id, player.name as name, match.player1_score as wins, match.player2_score as losses, match.ties as ties").order(name: :desc)
-    # puts "player1s.inspect #{player1s.inspect}"
-    # player2s = Player.select("player.id as player_id, player.name as name, matches.player2_score as wins, matches.player1_score as losses, matches.ties as ties").joins("LEFT OUTER JOIN matches ON player_id= matches.player2_id").order(name: :desc)
-    # players = player1s.union(player2s)
-    # @player_standings = players.select("player_id as id, name, count(case when wins > losses then 1 end) as match_wins, count(case when wins < losses then 1 end) as match_losses, count(case when wins = losses then 1 end) as match_ties, sum(wins) as game_wins, sum(losses) as game_losses, sum(ties) as game_ties").group_by(:player_id, :name).order(:match_wins)
-
+    @player_standings = TourneyService.generate_standings params[:id]
   end
 
   # POST /tourneys
@@ -176,9 +121,9 @@ class TourneysController < ApplicationController
           @tourney.players << entrant
         end
       end
-      redirect_to @tourney, notice: 'Tourney was successfully created.' 
+      redirect_to @tourney, notice: 'Tourney was successfully created.'
     else
-      render :new 
+      render :new
     end
   end
 

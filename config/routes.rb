@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   resources :tourneys do
     member do
       get 'brackets'
+      get 'brackets_next'
+      get 'brackets_initial'
       get 'standings'
     end
   end

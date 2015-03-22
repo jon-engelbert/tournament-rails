@@ -43,13 +43,23 @@ group :development, :test do
   gem 'spring'
   # Use sqlite3 as the database for Active Record
   gem 'sqlite3'
+  gem 'rspec'
+  gem 'rspec-mocks'
+  gem 'rspec-activemodel-mocks'
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+  gem 'capybara'
 end
 
 group :test do
+  gem 'spork'
   gem 'guard'
   gem 'guard-minitest'
+  gem 'guard-rspec', require: false
+  gem 'guard-spork'
   gem 'minitest-reporters', '1.0.5'
   gem 'mini_backtrace',     '0.1.3'
+  gem 'database_cleaner'
 end
 
 group :production do

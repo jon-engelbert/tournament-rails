@@ -1,11 +1,10 @@
 <h1>Tourney Brackets</h1>
 
 <div class="player_names" id="player_area">
+  <% i = 0 %>
   <% round = 0 %>
-  <% while round <= @max_round do%>
-    <% i = 0 %>
-    <h2>Round <%=round%></h2>
-    <% @matches.select {|match| match.round == round}.each do |match| %>
+  <% while round < @max_round do %>
+    <% @matches.select {|match| match.round = round}.each do |match| %>
       <section id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>">
         <label for="<%= match.player1_name %>"> <%= match.player1_name %> </label>
         vs
@@ -14,7 +13,7 @@
       </section>
       <input type=text id= "score_<%=match.player1_name%>_<%=match.player2_name%>" value=
         "<% if match.player1_score + match.player2_score + match.ties > 0 %>
-  <%=match.player1_score%> - <%=match.player2_score%><% end %><% if match.ties > 0 %>  (<%=match.ties%>)
+  <%=match.player1_score%> - <%=match.player2_score%><% end %><% if match.ties > 0 %>  (<%=match.ties%>) 
         <% end %>" readonly
         >
       <br>
@@ -32,18 +31,15 @@
       <br>
       <% i += 1 %>
     <% end %>
-    <% round += 1 %>
-  <% end %>
-  <% if @bye_player %>
-    <label for="<%= @bye_player.name %>"> <%= @bye_player.name %> </label>
-    bye
-    <br>
-    <br>
   <% end %>
 </div>
 
 <div id="nextRoundButton">
-  <a href=<%=brackets_next_tourney_path%> >Generate Next Round</a>
+  <%= form_tag(brackets_tourney_path(round+1), method: :post, remote: true) do %>
+  <div class="actions">
+    <%= submit_tag "Generate Next Round" %>
+  </div>
+  <% end %>
 </div>
 
 <div id="AJAX_Results">
@@ -79,12 +75,12 @@
   </div>
   <input type=number name="tourney_id" id="tourneyid" value= <%=@tourney.id%>
     style="display: none;" >
-  <input type=number name="round" id="round"
+  <input type=number name="round" id="round" 
     style="display: none;" >
 
   <div class="actions">
     <%= submit_tag "Record Match Results" %>
-    <%= button_tag "Cancel",:type => 'button',:class => "cancelEdit" %>
+    <%= button_tag "Cancel",:type => 'button',:class => "cancelEdit" %>  
   </div>
   <% end %>
 </div>
