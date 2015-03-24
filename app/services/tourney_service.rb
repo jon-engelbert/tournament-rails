@@ -180,7 +180,11 @@ class TourneyService
       match_byes = playermatches.count {|match| match.bye}
       match_points = 3*match_wins + match_ties + 3* match_byes
       total_games = match_wins + match_losses + match_ties
-      win_pct = (3.0*match_wins + match_ties) / total_games
+      if total_games > 0
+        win_pct = (3.0*match_wins + match_ties) / total_games
+      else
+        win_pct = 0
+      end
       standing = {player_id: player.id, name: player.name, wins: match_wins, losses: match_losses, ties: match_ties, total_matches: total_games, points: match_points, win_pct: win_pct, player: player}
       puts "standing #{standing}"
       standings << standing

@@ -5,6 +5,7 @@
 <table>
   <thead>
     <tr>
+      <th>id</th>
       <th>Player1</th>
       <th>Player2</th>
       <th>Tourney</th>
@@ -19,6 +20,7 @@
   <tbody>
     <% @matches.each do |match| %>
       <tr>
+        <td><%= match.id %></td>
         <td><%= match.player1_id %></td>
         <td><%= match.player2_id %></td>
         <td><%= match.tourney_id %></td>

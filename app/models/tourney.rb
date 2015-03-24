@@ -141,12 +141,12 @@ class Tourney < ActiveRecord::Base
     puts "************** In brackets"
     # players = Player.all()
     match_player_ids = Set.new
-    match_records = Match.where(tourney: id)
+    match_records = Match.where(tourney_id: id)
     match_records.each do |match|
       match_player_ids << match.player1_id
       match_player_ids << match.player2_id
     end
-    max_round = Match.where(tourney: id).maximum(:round)
+    max_round = Match.where(tourney_id: id).maximum(:round)
     max_round = 0 if max_round.nil?
     puts "************** max_round: #{max_round}"
     current_round_match_player_ids = TourneyService.get_unique_complete_player_ids(id, max_round)
@@ -165,19 +165,22 @@ class Tourney < ActiveRecord::Base
     # for the most recent round, generate new pairings for unmatched entrants
     # need to check if the most recent round has results for all matches- if so, then generate pairings for the next round.
     matches = []
-    match_records = Match.where(tourney: id)
+    match_records = Match.where(tourney_id: id)
     match_records.each do |match|
+      puts "******************* match: #{match.inspect}"
       match_with_names = match.dup
+      match_with_names.id = match.id
+      puts "******************* match_with_names: #{match_with_names.inspect}"
       match_with_names.player1_name = Player.find_by(id: match.player1_id).name
       match_with_names.player2_name = Player.find_by(id: match.player2_id).name
-      matches << match_with_names if match.round <= max_round
+      matches << match_with_names if match.round.present? && match.round <= max_round
     end
-    match_records = Match.where(tourney: id, round: max_round)
+    match_records = Match.where(tourney_id: id, round: max_round)
     if max_round == 0
       pairs, bye_player = swiss_pairings_initial entrants_unmatched
     else
       standings_unmatched = generate_standings entrants_unmatched
-      puts "standings_unmatched: #{standings_unmatched}"
+      puts "**********************standings_unmatched: #{standings_unmatched}"
       pairs, bye_player = swiss_pairings standings_unmatched
     end
     player1, player2 = pairs.transpose
@@ -189,7 +192,10 @@ class Tourney < ActiveRecord::Base
         parms = {tourney_id: id, player1_id: data[0].id, player2_id: data[1].id, player1_score: data[2], player2_score: data[3], ties: data[4], round: data[5], bye: false}
         match = Match.new parms
         match.save
+        puts "******************* match: #{match.inspect}"
         match_with_names = match.dup
+        match_with_names.id = match.id
+        puts "******************* match_with_names: #{match_with_names.inspect}"
         match_with_names.player1_name = data[0].name
         match_with_names.player2_name = data[1].name
         matches << match_with_names
@@ -198,8 +204,9 @@ class Tourney < ActiveRecord::Base
     if bye_player
       parms = {tourney_id: id, player1_id: bye_player.id, player2_id: bye_player.id, player1_score: 0, player2_score: 0, ties: 0, round: 0, bye: true}
       match = Match.new parms
-      match.save
+      match.save!
       match_with_names = match.dup
+      match_with_names.id = match.id
       match_with_names.player1_name = match_with_names.player2_name = Player.find_by(id: bye_player.id).name
       matches << match_with_names
     end

@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 20150318151916) do
   end
 
   add_index "entrants", ["player_id", "tourney_id"], name: "index_entrants_on_player_id_and_tourney_id", unique: true
+  add_index "entrants", ["player_id"], name: "index_entrants_on_player_id"
+  add_index "entrants", ["tourney_id"], name: "index_entrants_on_tourney_id"
 
   create_table "matches", force: :cascade do |t|
     t.integer  "player1_id"
@@ -70,6 +72,6 @@ ActiveRecord::Schema.define(version: 20150318151916) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["name"], name: "index_users_on_name"
+  add_index "users", ["name"], name: "index_users_on_name", unique: true
 
 end

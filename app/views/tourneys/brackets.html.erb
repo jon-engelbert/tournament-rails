@@ -1,3 +1,10 @@
+<head>
+   <meta charset="utf-8">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+   <!-- Javascript -->
+</head>
 <h1>Tourney Brackets</h1>
 
 <div class="player_names" id="player_area">
@@ -6,19 +13,28 @@
     <% i = 0 %>
     <h2>Round <%=round%></h2>
     <% @matches.select {|match| match.round == round}.each do |match| %>
-      <section id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>">
-        <label for="<%= match.player1_name %>"> <%= match.player1_name %> </label>
+      <!-- <section id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>"> -->
+        <div id = "drag_<%=round%>" class = "draggable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+          <p><%= match.player1_name %></p>
+        </div>
+        <div id = "drop_<%=round%>" class = "droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+          <p>Swap destination</p>
+        </div>
         vs
-        <label for="<%= match.player2_name %>"> <%= match.player2_name %> </label>
+        <div id = "drag_<%=round%>" class = "draggable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
+          <p> <%= match.player2_name %> </label>
+        </div>
+        <div id = "drop_<%=round%>" class = "droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
+          <p>Swap destination</p>
+        </div>
         <br>
-      </section>
       <input type=text id= "score_<%=match.player1_name%>_<%=match.player2_name%>" value=
         "<% if match.player1_score + match.player2_score + match.ties > 0 %>
   <%=match.player1_score%> - <%=match.player2_score%><% end %><% if match.ties > 0 %>  (<%=match.ties%>)
         <% end %>" readonly
         >
       <br>
-      </section>
+      <!-- </section> -->
         <a href="#" class="editMatchButton"
           id="editMatch"
           data-player1name="<%= match.player1_name%>"
@@ -28,9 +44,9 @@
           data-ties="<%= match.ties%>"
           data-round="<%= match.round %>">
           Edit Match Results</a>
-      <br>
-      <br>
-      <% i += 1 %>
+        <br>
+        <br>
+        <% i += 1 %>
     <% end %>
     <% round += 1 %>
   <% end %>
@@ -91,5 +107,6 @@
 
 
 <%= content_tag "div", id: "entrants", data: {pairs: @pairs, scores: @scores } do end %>
+<%= content_tag "div", id: "paths", data: {swap: swap_matches_path } do end %>
 <%= link_to 'Show', @tourney %> |
 <%= link_to 'Back', tourneys_path %>

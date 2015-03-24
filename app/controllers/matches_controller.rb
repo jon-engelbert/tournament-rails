@@ -37,6 +37,44 @@ class MatchesController < ApplicationController
     end
   end
 
+  # POST /matches/swap
+  def swap
+    player1id, player2id = -1, -1
+    match1, match2 = nil, nil
+    puts "****************** in swap match, params: #{params}"
+    player1name = params['player1_swap']
+    player2name = params['player2_swap']
+    begin
+      player1id = Player.find_by(name: player1name).id
+      player2id = Player.find_by(name: player2name).id
+    rescue Exception => exc
+      logger.error("Message for the log file #{exc.message}")
+      flash[:notice] = "Store error message"
+    end
+    round = params['round']
+    tourney_id = params["tourney_swap"]
+    begin
+      match1 = Match.find_by(id: params['match1_id'])
+      match2 = Match.find_by(id: params['match2_id'])
+      puts "******************* matches: #{match1.inspect} #{match2.inspect}"
+    rescue Exception => exc
+       puts "match not found: #{player1id}, #{player2id}, #{tourney_id}, #{params['round']}"
+    end
+    # respond_to do |format|
+      match1.player1_id = player2id
+      match2.player2_id = player1id
+      match1.save
+      match_hash = match1.as_json
+      match_hash['player1_name'] = player1name
+      match_hash['player2_name'] = player2name
+      puts "************** match_hash: #{match_hash.inspect}"
+      puts "************** match_hash.to_json: #{match_hash.to_json.inspect}"
+      puts "************** request.xhr: #{request.xhr?}"
+      # format.json { render :json => match_hash.to_json }
+      render json: match_hash.to_json and return #if request.xhr?
+    # end
+  end
+
   # POST /matches/record
   # def self.record # this doesn't work, route not found when class method
   def record

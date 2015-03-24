@@ -13,6 +13,9 @@ Rails.application.routes.draw do
     member do
       post 'record'
     end
+    collection do
+      post 'swap'
+    end
   end
 
   resources :tourneys
