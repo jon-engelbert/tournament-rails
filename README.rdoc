@@ -1,28 +1,12 @@
-== README
+this application allows the signed in user to set up a swiss-style tournament with a set of entrants, then to generate brackets, enter match results, and generate new round brackets until the tournament is over.
+The standings can also be viewed.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Presently, the signup step is broken, i.e. the 'mailer' doesn't actually send an email out to you as the new registered user, so even if you sign up you won't be able log in yet.  I'm going to work to fix that soon.  Also, If I have time, I'll seed it with some data so that it's more interesting.
+<p>
+The heroku instance is at: https://turnkey-tourney.herokuapp.com/
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+To build & run it:
+cd into the project folder.
+bundle install
+rake db:migrate
+rails s
