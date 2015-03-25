@@ -14,25 +14,22 @@
     <h2>Round <%=round%></h2>
     <% @matches.select {|match| match.round == round}.each do |match| %>
       <!-- <section id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>"> -->
-        <div id = "drag_<%=round%>" class = "draggable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
-          <p><%= match.player1_name %></p>
+        <div id = "player1_<%=match.id%>" class = "draggable droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+          <%= match.player1_name %>
         </div>
-        <div id = "drop_<%=round%>" class = "droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
-          <p>Swap destination</p>
-        </div>
+        <div>
         vs
-        <div id = "drag_<%=round%>" class = "draggable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
-          <p> <%= match.player2_name %> </label>
-        </div>
-        <div id = "drop_<%=round%>" class = "droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
-          <p>Swap destination</p>
+      </div>
+        <div id = "player2_<%=match.id%>" class = "draggable droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
+          <%= match.player2_name %> 
         </div>
         <br>
-      <input type=text id= "score_<%=match.player1_name%>_<%=match.player2_name%>" value=
-        "<% if match.player1_score + match.player2_score + match.ties > 0 %>
+      <textarea type=text id= "score_<%=match.player1_name%>_<%=match.player2_name%>" readonly>
+        <% if match.player1_score + match.player2_score + match.ties > 0 %>
   <%=match.player1_score%> - <%=match.player2_score%><% end %><% if match.ties > 0 %>  (<%=match.ties%>)
-        <% end %>" readonly
-        >
+        <% end %>
+        
+      </textarea>
       <br>
       <!-- </section> -->
         <a href="#" class="editMatchButton"

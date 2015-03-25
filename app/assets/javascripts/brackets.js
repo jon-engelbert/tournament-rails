@@ -32,33 +32,46 @@ $(document).on ('ready page:load', function() {
 		$("#AJAX_Results").append ("<p>ERROR</p>");
 		$("#Edit_scores").hide();
 	})
-	$("#Swap").on("ajax:success", function (e, data, status, xhr) {
-		var match = JSON.parse(xhr.responseText);
-		$("#AJAX_Results").append(xhr.responseText);
-		$("#drag_" + match["player1_name"]+ "_" + match["player2_name"]).val(match["player1_score"]+ " - " + match["player2_score"] + "  (" + match["ties"] + ")");
-		$("#AJAX_Results").append("#score_" + match["player1_name"]+ "_" + match["player2_name"]);
-	})
-	$("#Swap").on("ajax:error", function(e, xhr, status, error) {
-		$("#AJAX_Results").append ("<p>ERROR</p>");
-	})
   var player1_name = '';
+  var player2_name = '';
   var match1_id = 0;
+  var match2_id = 0;
+  var drag_id = '';
+  var drop_id = '';
+  var drag_pos;
     $( ".draggable" ).draggable({
       drag: function( event, ui ) {
         player1_name = $(this).data('playername');  
         match1_id = $(this).data('matchid');  
+        drag_id = this.id;
+        drag_pos = $(this).position();
         console.log('player_name, match_id, path');
         console.log(player1_name);
         console.log(match1_id);
         console.log(swapmatch_path);
         console.log($('#paths').data('swap'));
-      }
+      },
+      revert : function(event, ui) {
+	    // on older version of jQuery use "draggable"
+	    // $(this).data("draggable")
+	    // on 2.x versions of jQuery use "ui-draggable"
+	    // $(this).data("ui-draggable")
+	    $(this).data("uiDraggable").originalPosition = {
+	        top : 0,
+	        left : 0
+	    };
+	    // return boolean
+	    return !event;
+	    // that evaluate like this:
+	    // return event !== false ? false : true;
+	  }
     });
     $( ".droppable" ).droppable({
       drop: function( event, ui ) {
         var fields = this.id.split('_');  
         var player2_name = $(this).data('playername');  
         var match2_id = $(this).data('matchid');  
+        drop_id = this.id;
         $( this )
             .addClass( "ui-state-highlight" )
             .find( "p" )
@@ -71,8 +84,20 @@ $(document).on ('ready page:load', function() {
           dataType: 'json',
           contentType: 'application/json',
           success: function (data) {
-            alert (data);
-            return false;
+			// var d = JSON.parse(data);
+            if (data['success'] === false) {
+            	return false;
+            }
+            console.log("success:" + data);
+            console.log("field_drag_id:" + drag_id);
+            console.log(player2_name)
+            console.log("field_drop_id:" + drop_id);
+            console.log(player1_name)
+            $("#" + drag_id ).text(player2_name);
+            $("#" + drag_id ).attr('playername', player2_name);
+            $("#" + drop_id ).text(player1_name);
+            $("#" + drop_id ).attr('playername', player1_name);
+            $("#" + drag_id ).css({ "position": "relative", "top": 0, "left": 0 });
           },
           error: function (data) {
             alert (data);
@@ -81,21 +106,4 @@ $(document).on ('ready page:load', function() {
         })
       }
     });
-	// $( ".draggable" ).draggable();
- //    $( ".droppable" ).droppable({
- //      drop: function( event, ui ) {
- //        $( this )
- //          .addClass( "ui-state-highlight" )
- //          .find( "p" )
- //            .html( this.id );
- //      var fields = this.id.split('_');     
- //      $('#player1_swap').val(fields[0]);
- //      $('#player2_swap').val(fields[1]);
- //      $('#round').val(fields[2]);
- //      }
- //    });
-
-	// function editMatch(identifier){
-	// 		alert("data-id:"+$(identifier).data('player1name')+", data-option:"+$(identifier).data('player1name'));
-	// }
 })

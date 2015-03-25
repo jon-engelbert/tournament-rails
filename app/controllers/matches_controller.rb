@@ -40,6 +40,7 @@ class MatchesController < ApplicationController
   # POST /matches/swap
   def swap
     player1id, player2id = -1, -1
+    error = false
     match1, match2 = nil, nil
     puts "****************** in swap match, params: #{params}"
     player1name = params['player1_swap']
@@ -50,6 +51,7 @@ class MatchesController < ApplicationController
     rescue Exception => exc
       logger.error("Message for the log file #{exc.message}")
       flash[:notice] = "Store error message"
+      error = true
     end
     round = params['round']
     tourney_id = params["tourney_swap"]
@@ -58,21 +60,28 @@ class MatchesController < ApplicationController
       match2 = Match.find_by(id: params['match2_id'])
       puts "******************* matches: #{match1.inspect} #{match2.inspect}"
     rescue Exception => exc
-       puts "match not found: #{player1id}, #{player2id}, #{tourney_id}, #{params['round']}"
+      logger.error("match not found: Message for the log file #{exc.message}, #{player1id}, #{player2id}, #{tourney_id}, #{params['round']}")
+      flash[:notice] = "Store error message"
+      error = true
     end
     # respond_to do |format|
-      match1.player1_id = player2id
-      match2.player2_id = player1id
-      match1.save
-      match_hash = match1.as_json
-      match_hash['player1_name'] = player1name
-      match_hash['player2_name'] = player2name
-      puts "************** match_hash: #{match_hash.inspect}"
-      puts "************** match_hash.to_json: #{match_hash.to_json.inspect}"
-      puts "************** request.xhr: #{request.xhr?}"
-      # format.json { render :json => match_hash.to_json }
-      render json: match_hash.to_json and return #if request.xhr?
-    # end
+    begin
+      match1.swap_player(player1id, player2id)
+      match2.swap_player(player2id, player1id)
+    rescue Exception =>exc
+      logger.error("Message for the log file #{exc.message}")
+      flash[:notice] = "Store error message"
+      error = true
+    end
+    response_hash = {}
+    response_hash['success'] = !error
+    response_hash['player1_name'] = player1name
+    response_hash['player2_name'] = player2name
+    puts "************** match_hash: #{response_hash.inspect}"
+    puts "************** match_hash.to_json: #{response_hash.to_json.inspect}"
+    puts "************** request.xhr: #{request.xhr?}"
+    # format.json { render :json => response_hash.to_json }
+    render json: response_hash.to_json and return if request.xhr?
   end
 
   # POST /matches/record

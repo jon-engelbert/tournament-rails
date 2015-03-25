@@ -5,8 +5,9 @@ class Match < ActiveRecord::Base
   def record_results params
 	puts "****************** in record match, params: #{params}"
 	begin
-	  match = Match.find(player1id: player1id, player2id: player2id, tourney_id: params['tourney_id'], round: params['round'])
-	rescue Exception => exc
+	  match = Match.find(player1_id: params['player1id'], player2_id: params['player2id'], tourney_id: params['tourney_id'], round: params['round'])
+    rescue Exception =>exc
+      logger.error("Message for the log file #{exc.message}")
 	end
 
 	player1_score = params[:player1_score]
@@ -14,5 +15,13 @@ class Match < ActiveRecord::Base
 	ties = params[:ties]
 	round = params[:round]
 	save
+  end
+
+  def swap_player(player1_id, player2_id)
+      if (player1_id == player2_id)
+        update_attribute(:player1_id, player2_id)
+      else
+        update_attribute(:player2_id, player2_id)
+      end
   end
 end
