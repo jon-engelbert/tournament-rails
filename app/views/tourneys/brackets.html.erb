@@ -12,49 +12,49 @@
   <% while round <= @max_round do%>
     <% i = 0 %>
     <h2>Round <%=round%></h2>
+    <div id= "round_matches">
     <% @matches.select {|match| match.round == round}.each do |match| %>
-      <!-- <section id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>"> -->
-        <div id = "player1_<%=match.id%>" class = "draggable droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+      <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "matchup">
+        <div id = "player1_<%=match.id%>" class = "draggable droppable ui-widget-content left-div" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
           <%= match.player1_name %>
         </div>
-        <div>
-        vs
-      </div>
-        <div id = "player2_<%=match.id%>" class = "draggable droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
+        <div class="middle-div">vs</div>
+        <div id = "player2_<%=match.id%>" class = "draggable droppable ui-widget-content right-div" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
           <%= match.player2_name %> 
         </div>
-        <br>
-      <textarea type=text id= "score_<%=match.player1_name%>_<%=match.player2_name%>" readonly>
-        <% if match.player1_score + match.player2_score + match.ties > 0 %>
-  <%=match.player1_score%> - <%=match.player2_score%><% end %><% if match.ties > 0 %>  (<%=match.ties%>)
-        <% end %>
-        
-      </textarea>
-      <br>
-      <!-- </section> -->
-        <a href="#" class="editMatchButton"
-          id="editMatch"
-          data-player1name="<%= match.player1_name%>"
-          data-player2name="<%= match.player2_name%>"
-          data-player1wins="<%= match.player1_score%>"
-          data-player2wins="<%= match.player2_score%>"
-          data-ties="<%= match.ties%>"
-          data-round="<%= match.round %>">
-          Edit Match Results</a>
-        <br>
-        <br>
-        <% i += 1 %>
+      </div>
+      <section class = "scores">
+      <% if match.player1_score + match.player2_score + match.ties > 0 %>
+        <textarea type=text id= "score_<%=match.player1_name%>_<%=match.player2_name%>" class="editMatchButton" readonly>
+          <%=match.player1_score%> - <%=match.player2_score%>(<%=match.ties%>)
+        </textarea>
+      <% end %>
+      </section>
+      <section class = "edit-match">
+      <a href="#" class="editMatchButton"
+        id="editMatch"
+        data-player1name="<%= match.player1_name%>"
+        data-player2name="<%= match.player2_name%>"
+        data-player1wins="<%= match.player1_score%>"
+        data-player2wins="<%= match.player2_score%>"
+        data-ties="<%= match.ties%>"
+        data-round="<%= match.round %>">
+        Edit Match Results</a>
+      </section>
+      <% i += 1 %>
     <% end %>
+  </div>
     <% round += 1 %>
   <% end %>
   <% if @bye_player %>
+  <div class = "matchup">
     <label for="<%= @bye_player.name %>"> <%= @bye_player.name %> </label>
     bye
-    <br>
-    <br>
+    </div>
   <% end %>
 </div>
 
+<div class = "matchup"> </div?
 <div id="nextRoundButton">
   <a href=<%=brackets_next_tourney_path%> >Generate Next Round</a>
 </div>
@@ -96,8 +96,8 @@
     style="display: none;" >
 
   <div class="actions">
-    <%= submit_tag "Record Match Results" %>
-    <%= button_tag "Cancel",:type => 'button',:class => "cancelEdit" %>
+    <%= submit_tag "Record Match Results",:class => "closeEdit" %>
+    <%= button_tag "Cancel",:type => 'button',:class => "closeEdit" %>
   </div>
   <% end %>
 </div>

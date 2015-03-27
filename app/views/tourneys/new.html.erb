@@ -22,8 +22,9 @@
     <button id="create_button">Create and Enter</button>
     <button id="cancel_button">Cancel</button>
 </div>
-<%= content_tag "div", id: "players", data: {name: @players_remaining_names, email: @players_remaining_emails, list: @players_remaining } do %>
-<% end %>
+<div class = "player-preview">
+<%= content_tag "div", id: "players", data: {name: @players_remaining_names, email: @players_remaining_emails, list: @players_remaining } do end %>
 <%= content_tag "div", id: "entrants", data: {name: @entrant_names, email: @entrant_emails, list: @entrant_name_list, list: @entrants} do end %>
+</div>
 <%= content_tag "div", id: "newplayerlink", data: {link: new_player_path} do end %>
 <%= link_to 'Back', tourneys_path %>

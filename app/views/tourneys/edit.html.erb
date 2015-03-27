@@ -10,10 +10,10 @@
 <h1>Editing Tourney</h1>
 
 <%= render 'form_super' %>
-
-<%= content_tag "div", id: "players", data: {name: @players_remaining_names, email: @players_remaining_emails, list: @players_remaining } do %>
-<% end %>
-<%= content_tag "div", id: "entrants", data: {name: @entrant_names, email: @entrant_emails} do end %>
+<div class = "player-preview">
+<%= content_tag "div", id: "players",  data: {name: @players_remaining_names, email: @players_remaining_emails, list: @players_remaining } do end %>
+<%= content_tag "div", id: "entrants",  data: {name: @entrant_name_list, email: @entrant_email_list} do end %>
+</div>
 <%= content_tag "div", id: "newplayerlink", data: {link: new_player_path} do end %>
 <%= link_to 'Show', @tourney %> |
 <%= link_to 'Back', tourneys_path %>

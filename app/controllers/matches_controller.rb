@@ -50,27 +50,34 @@ class MatchesController < ApplicationController
       player2id = Player.find_by(name: player2name).id
     rescue Exception => exc
       logger.error("Message for the log file #{exc.message}")
-      flash[:notice] = "Store error message"
+      flash[:notice] = "Swap aborted"
       error = true
     end
     round = params['round']
     tourney_id = params["tourney_swap"]
+    if (params['match1_id'] == params['match2_id'])
+      logger.error("swap within the same match is not allowed")
+      error = true
+      flash[:notice] = "Swap aborted"
+    end
     begin
       match1 = Match.find_by(id: params['match1_id'])
       match2 = Match.find_by(id: params['match2_id'])
       puts "******************* matches: #{match1.inspect} #{match2.inspect}"
     rescue Exception => exc
       logger.error("match not found: Message for the log file #{exc.message}, #{player1id}, #{player2id}, #{tourney_id}, #{params['round']}")
-      flash[:notice] = "Store error message"
+      flash[:notice] = "Swap aborted"
       error = true
     end
     # respond_to do |format|
     begin
-      match1.swap_player(player1id, player2id)
-      match2.swap_player(player2id, player1id)
+      if not error
+        match1.replace_player(player1id, player2id)
+        match2.replace_player(player2id, player1id)
+      end
     rescue Exception =>exc
       logger.error("Message for the log file #{exc.message}")
-      flash[:notice] = "Store error message"
+      flash[:notice] = "Swap aborted"
       error = true
     end
     response_hash = {}

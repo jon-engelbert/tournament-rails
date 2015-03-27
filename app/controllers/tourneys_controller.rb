@@ -132,25 +132,39 @@ class TourneysController < ApplicationController
   def update
     respond_to do |format|
       puts "params: #{params.inspect}"
+      puts "***************** @tourney.players #{@tourney.players}"
       if @tourney.update(tourney_params)
         #store entrants
-        names = tourney_params[:entrant_names].split("\r\n")
-        emails = tourney_params[:entrant_emails].split("\r\n")
+        names = tourney_params[:entrant_names].split(",")
+        emails = tourney_params[:entrant_emails].split(",")
         entrants = names.zip(emails)
         puts entrants
+        #add un-found entrants
         entrants.each do |name, email|
           entrant  = Player.find_by name: name
           if entrant.present?
-            begin
+            if !@tourney.players.include? entrant
               @tourney.players << entrant
-            rescue Exception => exc
-               logger.error("Message for the log file #{exc.message}")
-               flash[:notice] = "Store error message"
             end
           else
             entrant = Player.new({name: name, email: email})
             entrant.save
             @tourney.players << entrant
+            # @tourney.entrants << entrant
+          end
+        end
+        @tourney.entrants.each do |entrant|
+          begin
+            player = Player.find(entrant.player_id)
+          rescue Exception => exc
+             logger.error("Message for the log file #{exc.message}")
+             flash[:notice] = "Store error message"
+          end
+          entrant_name = player.present? ? player.name : ""
+          puts "********************* tourney_player, name: #{entrant.inspect}, #{entrant_name}"
+          if !names.include?(entrant_name)
+            puts "**************** about to remove: #{entrant_name}"
+            entrant.delete
           end
         end
         format.html { redirect_to @tourney, notice: 'Tourney was successfully updated.' }

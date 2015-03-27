@@ -23,26 +23,48 @@
     <%= f.label :location %><br>
     <%= f.text_field :location %>
   </div>
-  <div class="playerfield">
-    <%= f.label 'player' %><br>
-    <input id="autocomplete-1">
-    <button id="addButton">Enter into Tournament</button>
-  </div>
-  <div id="new_player" style="display: none;">
-    <p>Player Name: <input type="text" id="player_name" /></p>
-    <p>Player Email: <input type="text" id="player_email" /></p>
-    <button id="create_button">Create and Enter</button>
-    <button id="cancel_button">Cancel</button>
-  </div>
-  <div class="entrant_names" id="entrant_name">
+  <div id="entrant_name" style="display: none;">
     <%= f.label 'Entrant Names' %><br>
     <%= f.text_area :entrant_names %>
   </div>
-  <div class="entrant_emails" id="entrant_email" >
+  <div id="entrant_email" style="display: none;">
     <%= f.label 'Entrant Emails' %><br>
     <%= f.text_area :entrant_emails %>
   </div>
-
+  <div class="entrant_names" id="entrant_name_div">
+    <%= f.label 'Entrant Names' %><br>
+    <ul id="entrant_name_list">
+      <% @entrant_name_list.each do |name| %>
+        <li><%= name %></li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="entrant_emails" id="entrant_email_div" >
+    <%= f.label 'Entrant Emails' %><br>
+    <ul id="entrant_email_list">
+      <% @entrant_email_list.each do |email| %>
+        <li><%= email %></li>
+      <% end %>
+    </ul>
+  </div>
+  <section class="add_and_remove_section">
+    <div class="add_player_section">
+      <div class="playerfield">
+        <input id="autocomplete-1" class = "left-button">
+        <button id="addButton" class = "right-div">Add To Tournament</button>
+      </div>
+      <div id="new_player" style="display: none;">
+        <p>Player Name: <input type="text" id="player_name" /></p>
+        <p>Player Email: <input type="text" id="player_email" /></p>
+        <button id="create_button">Create and Enter</button>
+        <button id="cancel_button">Cancel</button>
+      </div>
+    </div>
+    <div class="remove_player_section">
+      <input id="autocomplete-removeentrant" class = "left-button">
+      <button id="removeButton" class = "right-div">Remove From Tournament</button>
+    </div>
+  </section>
   <div class="actions">
     <%= f.submit %>
   </div>

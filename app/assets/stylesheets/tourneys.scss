@@ -1,5 +1,64 @@
 // Place all the styles related to the Tourneys controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
-.draggable { width: 80px; height: 15px; padding: 0.5em; float: left; margin: 0px 0px 0px 0; }
-.droppable { width: 140px; height: 30px; padding: 0.5em; float: left; margin: 0px; }
+.left-div {
+    float: left;
+    width: 120px;
+    margin-right: 8px;
+    background-color: skyblue;
+}
+.middle-div {
+    float: left;
+    margin-left: 108px;
+    background-color: linen;
+    width: 50px;
+	padding: 0.5em; 
+	margin: 0px;
+}​
+.right-div {
+    float: left;
+    width: 120px;
+    margin-left: 208px;
+    background-color: skyblue;
+}
+.draggable {  padding: 0.5em; float: left; margin: 0px 0px 0px 0; }
+.droppable { padding: 0.5em; float: left; margin: 0px; }
+.matchup {clear:both; min-width: 280;}
+.scores {clear:both;float: left;}
+.edit-match {clear:both;float: left;}
+.player-preview {clear:both;float: left;; min-width: 280;}
+.player-list {
+    float: left;
+    width: 120px;
+    margin-right: 8px;
+}
+.entrant_names, .entrant_emails {
+    float: left;
+    min-width: 150px;
+    margin-right: 8px;
+    overflow:hidden; overflow-y:scroll;
+}
+.entrant_names {
+    clear: both;
+}
+.entrant_names ul, .entrant_emails ul {
+    min-width: 150px;
+    overflow:hidden; overflow-y:scroll;
+}
+.left-button {
+    float: left;
+    width: 120px;
+    margin-right: 8px;
+}
+.add_player_section {
+    float: left;
+    width: 300px;
+    margin_right:8px;    
+}
+.remove_player_section {
+    float: left;
+    min_width: 300px;
+}
+.add_and_remove_section {clear:both;float: left;; min-width: 280;}
+
+

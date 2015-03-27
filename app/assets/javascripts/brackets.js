@@ -17,7 +17,7 @@ $(document).on ('ready page:load', function() {
 		// $('#match_params').show();
 		// $('#score1').val
 	})
-	$('.cancelEdit').click(function(e) {
+	$('.closeEdit').click(function(e) {
 		e.preventDefault();
 		$("#Edit_scores").hide();
 	})
@@ -72,10 +72,10 @@ $(document).on ('ready page:load', function() {
         var player2_name = $(this).data('playername');  
         var match2_id = $(this).data('matchid');  
         drop_id = this.id;
-        $( this )
-            .addClass( "ui-state-highlight" )
-            .find( "p" )
-              .html( this.id );
+        // $( this )
+        //     .addClass( "ui-state-highlight" )
+        //     .find( "p" )
+        //       .html( this.id );
         $.ajax({
           type: "POST",
           url: swapmatch_path,
@@ -101,6 +101,7 @@ $(document).on ('ready page:load', function() {
           },
           error: function (data) {
             alert (data);
+            $("#" + drag_id ).css({ "position": "relative", "top": 0, "left": 0 });
             return false;
           }
         })
