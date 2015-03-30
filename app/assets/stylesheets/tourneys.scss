@@ -4,13 +4,11 @@
 .left-div {
     float: left;
     width: 120px;
+    padding: 0.5em; 
     margin-right: 8px;
-    background-color: skyblue;
 }
 .middle-div {
     float: left;
-    margin-left: 108px;
-    background-color: linen;
     width: 50px;
 	padding: 0.5em; 
 	margin: 0px;
@@ -18,14 +16,24 @@
 .right-div {
     float: left;
     width: 120px;
+    padding: 0.5em; 
     margin-left: 208px;
-    background-color: skyblue;
 }
+.side-by-side {
+    float: left;
+    width: 300px;
+    padding: 1.5em; 
+    margin: 0px;
+    background-color: linen;
+}​
 .draggable {  padding: 0.5em; float: left; margin: 0px 0px 0px 0; }
 .droppable { padding: 0.5em; float: left; margin: 0px; }
-.matchup {clear:both; min-width: 280;}
+.matchups {clear:both; min-width: 280;}
 .scores {clear:both;float: left;}
 .edit-match {clear:both;float: left;}
+.editMatchButton:hover {
+ cursor:pointer;
+}
 .player-preview {clear:both;float: left;; min-width: 280;}
 .player-list {
     float: left;
@@ -61,4 +69,10 @@
 }
 .add_and_remove_section {clear:both;float: left;; min-width: 280;}
 
-
+.leftDialogButton
+{
+    position: absolute;
+    left:8px;
+    top: 400px;
+    margin-right: 170px;
+}

@@ -3,18 +3,18 @@ class Match < ActiveRecord::Base
   attr_accessor :player1_name, :player2_name
 
   def record_results params
-	puts "****************** in record match, params: #{params}"
-	begin
-	  match = Match.find(player1_id: params['player1id'], player2_id: params['player2id'], tourney_id: params['tourney_id'], round: params['round'])
-    rescue Exception =>exc
-      logger.error("Message for the log file #{exc.message}")
-	end
+  	puts "****************** in record match, params: #{params}"
+  	begin
+  	  match = Match.find(id: params[:match_id])
+      rescue Exception =>exc
+        logger.error("Message for the log file #{exc.message}")
+  	end
 
-	player1_score = params[:player1_score]
-	player2_score = params[:player2_score]
-	ties = params[:ties]
-	round = params[:round]
-	save
+  	player1_score = params[:player1_score]
+  	player2_score = params[:player2_score]
+  	ties = params[:ties]
+  	round = params[:round]
+  	save
   end
 
 

@@ -47,13 +47,11 @@ class Tourney < ActiveRecord::Base
       puts "*************** max_round #{max_round}"
       player[:total_matches] >= max_round
     }
-    # puts "*************players_nobye: #{players_nobye}"
     if use_bye && players_nobye.present?
       player_bye = players_nobye.sample[0]
-      # puts "*****************player_bye: #{player_bye}"
     end
     is_begin_pair = true
-    prev_player = nil
+    prev_player = nil, player = nil
     i = 0
     pairs = []
     matches = Match.where(tourney: id).select {|match| match.player1_score > 0 || match.player2_score > 0 || match.ties > 0}
@@ -63,17 +61,21 @@ class Tourney < ActiveRecord::Base
     if match_p1.present? 
       match_ups = match_p1.zip(match_p2)
     end
-    puts "*********************** players_standings #{players_standings}"
+    puts "*********************** match_ups #{match_ups}"
     remaining_players = []
     players_standings.each do |player_standing|
       remaining_players << player_standing[:player]
     end
-    players_standings.each do |player|
+    while remaining_players.present? do 
+      player = remaining_players.first
       if (!use_bye || (player[0] != player_bye))
         if i % 2 == 0
-          puts "************************ i == 0 player #{player.inspect}"
+          puts "************************ i%2 == 0 player #{player.inspect}, #{player[:player].inspect}"
           prev_player = player
-          remaining_players = remaining_players - player[:player]
+          player_to_remove = player
+          puts "*********************** remaining players before delete: #{remaining_players.inspect}"
+          remaining_players.delete player_to_remove
+          puts "*********************** remaining players: #{remaining_players.inspect}"
         else
           puts "************************ player #{player.inspect}"
           puts "************************ prev_player #{prev_player.inspect}"
@@ -82,14 +84,19 @@ class Tourney < ActiveRecord::Base
           # because it does not ensure that players only match against the same opponent once per tournament.
           is_already_played = true
           next_player_index = 0
-          while is_already_played && next_player_index != remaining_players.count do
+          while is_already_played && next_player_index < remaining_players.count do
             player = remaining_players[next_player_index]
-            is_already_played = match_ups.include?([player[:player_id], prev_player[:player_id]]) || match_ups.include?([prev_player[:player_id], player[:player_id]])
+            puts "************************ in loop, player #{player.inspect}"
+            is_already_played = match_ups.include?([player[:id], prev_player[:id]]) || match_ups.include?([prev_player[:id], player[:id]])
+            puts "*********************** match_ups #{match_ups}"
+            puts "************************ is_already_played, player1, player2: #{is_already_played}, #{player[:id]}, #{prev_player[:id]}"
             next_player_index += 1
           end
-          pair = [player[:player], prev_player[:player]]
-          remaining_players = remaining_players - player[:player]
-
+          pair = [player, prev_player]
+          puts "************************* pair: #{pair.inspect}"
+          puts "*********************** remaining players before delete: #{remaining_players.inspect}"
+          remaining_players.delete player
+          puts "*********************** remaining players: #{remaining_players.inspect}"
           pairs.append(pair)
         end
         i += 1

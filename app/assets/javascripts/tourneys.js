@@ -1,6 +1,10 @@
 $(document).on ('ready page:load', function() {
   var entrantNames = $('#entrants').data('name');
   var entrantEmails = $('#entrants').data('email');
+  $(document).on("ajax:success", "#Edit_scores", function() {
+      console.log('file sent!');
+    console.log('yep');
+    });
   $('#tourney_entrant_names').val(entrantNames);
   $('#tourney_entrant_emails').val(entrantEmails);
 

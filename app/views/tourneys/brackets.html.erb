@@ -12,49 +12,67 @@
   <% while round <= @max_round do%>
     <% i = 0 %>
     <h2>Round <%=round%></h2>
-    <div id= "round_matches">
+    <div id= "round_matches" class = "matchups">
     <% @matches.select {|match| match.round == round}.each do |match| %>
-      <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "matchup">
-        <div id = "player1_<%=match.id%>" class = "draggable droppable ui-widget-content left-div" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+      <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "matchup side-by-side ui-widget-content">
+        <section>
+        <% if logged_in? %>
+          <div id = "player1_<%=match.id%>" class = "draggable droppable left-div ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+        <% else %>
+          <div id = "player1_<%=match.id%>" class = "left-div " data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+        <% end %>
           <%= match.player1_name %>
-        </div>
-        <div class="middle-div">vs</div>
-        <div id = "player2_<%=match.id%>" class = "draggable droppable ui-widget-content right-div" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
-          <%= match.player2_name %> 
-        </div>
+          </div>
+          <div class="middle-div">
+            vs
+          </div>
+        <% if logged_in? %>
+          <div id = "player2_<%=match.id%>" class = "draggable droppable right-div ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
+        <% else %>
+          <div id = "player2_<%=match.id%>" class = "right-div " data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
+        <% end %>
+            <%= match.player2_name %> 
+          </div>
+        </section>
+        <section class = "scores">
+        <% if not logged_in? %>
+          <div id= "score_<%=match.id%>"  > 
+            <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>)
+          </div>
+        <% elsif match.player1_score + match.player2_score + match.ties > 0 %>
+          <div id= "score_<%=match.id%>" title="Edit Match Scores" class="editMatchButton" 
+          data-player1name="<%= match.player1_name%>"
+          data-player2name="<%= match.player2_name%>"
+          data-player1wins="<%= match.player1_score%>"
+          data-player2wins="<%= match.player2_score%>"
+          data-ties="<%= match.ties%>"
+          data-round="<%= match.round %>"
+          data-matchid="<%= match.id %>">
+            <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>) -- click to edit
+          </div>
+        <% else %>
+          <div id= "score_<%=match.id%>" class="editMatchButton" title="Edit Match Scores"
+          data-player1name="<%= match.player1_name%>"
+          data-player2name="<%= match.player2_name%>"
+          data-player1wins="<%= match.player1_score%>"
+          data-player2wins="<%= match.player2_score%>"
+          data-ties="<%= match.ties%>"
+          data-round="<%= match.round %>"
+          data-matchid="<%= match.id %>">
+            click to edit
+          </div>
+        <% end %>
+        </section>
       </div>
-      <section class = "scores">
-      <% if match.player1_score + match.player2_score + match.ties > 0 %>
-        <textarea type=text id= "score_<%=match.player1_name%>_<%=match.player2_name%>" class="editMatchButton" readonly>
-          <%=match.player1_score%> - <%=match.player2_score%>(<%=match.ties%>)
-        </textarea>
-      <% end %>
-      </section>
-      <section class = "edit-match">
-      <a href="#" class="editMatchButton"
-        id="editMatch"
-        data-player1name="<%= match.player1_name%>"
-        data-player2name="<%= match.player2_name%>"
-        data-player1wins="<%= match.player1_score%>"
-        data-player2wins="<%= match.player2_score%>"
-        data-ties="<%= match.ties%>"
-        data-round="<%= match.round %>">
-        Edit Match Results</a>
-      </section>
       <% i += 1 %>
     <% end %>
-  </div>
-    <% round += 1 %>
-  <% end %>
-  <% if @bye_player %>
-  <div class = "matchup">
-    <label for="<%= @bye_player.name %>"> <%= @bye_player.name %> </label>
-    bye
     </div>
+    <div class="matchups"> </div>
+    <% round += 1 %>
   <% end %>
 </div>
 
-<div class = "matchup"> </div?
+<div class = "matchups"> </div>
 <div id="nextRoundButton">
   <a href=<%=brackets_next_tourney_path%> >Generate Next Round</a>
 </div>
@@ -63,47 +81,33 @@
 </div>
 
 
-<div class="popup" id= "Edit_scores" style="display: none;">
-  <%= form_tag(record_match_path(0), method: :post, remote: true) do %>
+<div id= "Edit_scores" class ="dialog">
+  <form>
+  <p class="validateTips">All form fields are required.</p>
   <div class="field">
-    <%= label_tag :player1 %><br>
-    <input type=text name="player1_name" id="player1_name"
-      >
+    <label id="player1_name"> wins</label>
+    <input type=number name="player1_score" id="player1_wins">
   </div>
   <div class="field">
-    <%= label_tag :player2 %><br>
-    <input type=text name="player2_name" id="player2_name"
-      >
-  </div>
-  <div class="field">
-    <%= label_tag :player1_wins %><br>
-    <input type=number name="player1_score" id="player1_wins"
-      >
-  </div>
-  <div class="field">
-    <%= label_tag :player2_wins %><br>
-    <input type=number name="player2_score" id="player2_wins"
-      >
+    <label id="player2_name"> wins</label>
+    <input type=number name="player2_score" id="player2_wins">
   </div>
   <div class="field">
     <%= label_tag :ties %><br>
-    <input type=number name="ties" id="ties"
-      >
+    <input type=number name="ties" id="ties">
   </div>
   <input type=number name="tourney_id" id="tourneyid" value= <%=@tourney.id%>
     style="display: none;" >
-  <input type=number name="round" id="round"
-    style="display: none;" >
+  <input type=number name="round" id="round" style="display: none;" >
+  <input type=number name="match_id" id="match_id" style="display: none;" >
 
-  <div class="actions">
-    <%= submit_tag "Record Match Results",:class => "closeEdit" %>
+      <button  class ="submitScores">Submit</button>
     <%= button_tag "Cancel",:type => 'button',:class => "closeEdit" %>
-  </div>
-  <% end %>
+    </form>
 </div>
 
 
 <%= content_tag "div", id: "entrants", data: {pairs: @pairs, scores: @scores } do end %>
-<%= content_tag "div", id: "paths", data: {swap: swap_matches_path } do end %>
+<%= content_tag "div", id: "paths", data: {swap: swap_matches_path , record: record_match_path} do end %>
 <%= link_to 'Show', @tourney %> |
 <%= link_to 'Back', tourneys_path %>

@@ -44,6 +44,7 @@ class TourneyService
     if is_round_complete(tourney_id, max_round)
       player_standings = generate_standings tourney_id
       pairs, bye_player = tourney.swiss_pairings player_standings
+      puts "************ pairs: #{pairs.inspect}"
     else
       return nil, nil
     end

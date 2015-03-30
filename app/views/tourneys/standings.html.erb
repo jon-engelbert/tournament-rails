@@ -9,7 +9,6 @@
   <td>ties</td>
   <td># matches</td>
   <td>points</td>
-  <td>win %</td>
   </tr>
   	<br>
   <% @player_standings.each do |entrant| %>
@@ -20,7 +19,6 @@
   <td><%=entrant[:ties]%></td>
   <td><%=entrant[:total_matches]%></td>
   <td><%=entrant[:points]%></td>
-  <td><%=entrant[:win_pct]%></td>
   </tr>
   <%end%>
 </table>

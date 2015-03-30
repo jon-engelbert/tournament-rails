@@ -1,5 +1,6 @@
 class MatchesController < ApplicationController
   before_action :set_match, only: [:show, :edit, :update, :destroy]
+  before_action :logged_in_user, only: [:new, :edit, :swap, :record, :update, :destroy, :create]
 
   # GET /matches
   # GET /matches.json
@@ -95,26 +96,43 @@ class MatchesController < ApplicationController
   # def self.record # this doesn't work, route not found when class method
   def record
     puts "****************** in record match, params: #{params}"
-    record_results params
+    match_id = params[:match_id]
+    match = nil
+    begin
+      puts "match find : #{params[:match_id]}"
+      match = Match.find_by(id: match_id)
+    rescue Exception => exc
+       puts "match not found: #{params['id']}, #{params['tourney_id']}, #{params['round']}"
+    end
+
+
+    if match.present?
+      match.player1_score = params[:player1_wins]
+      match.player2_score = params[:player2_wins]
+      match.ties = params[:ties]
+      match.round = params[:round]
+      puts "***************** updating existing match: #{match.inspect}"
+      match.save
+    else
+      puts "match not present"
+    end
+    respond_to do |format|
+      match_hash = match.as_json
+      puts "*********** Getting to end of record service, about to render JSON ***********"
+      format.json { render :json => match_hash.to_json }
+      # format.json { render :json => {:what => 'ever'} }
+    end
   end
 
   def record_results params
-    puts "****************** in record match, params: #{params}"
-    player1name = params['player1_name']
-    player2name = params['player2_name']
+    puts "****************** in record results, params: #{params}"
+    match_id = params['match_id']
     begin
-      player1id = Player.find_by(name: player1name).id
-      player2id = Player.find_by(name: player2name).id
-    rescue Exception => exc
-      logger.error("Message for the log file #{exc.message}")
-      flash[:notice] = "Store error message"
-    end
-    begin
-      puts "match find : #{player1id}, #{player2id}, #{params['tourney_id']}, #{params['round']}"
-      match = Match.find_by(player1_id: player1id, player2_id: player2id, tourney_id: params["tourney_id"], round: params['round'])
+      puts "match find : #{params['tourney_id']}, #{params['round']}, #{params['id']}"
+      match = Match.find_by(match_id: match_id)
     rescue Exception => exc
        puts "match not found: #{player1id}, #{player2id}, #{params['tourney_id']}, #{params['round']}"
-   end
+    end
 
     if match.nil?
       begin
@@ -125,10 +143,11 @@ class MatchesController < ApplicationController
     end
 
     if match.present?
-      match.player1_score = params[:player1_score]
-      match.player2_score = params[:player2_score]
+      match.player1_score = params[:player1_wins]
+      match.player2_score = params[:player2_wins]
       match.ties = params[:ties]
       match.round = params[:round]
+      puts "***************** updating existing match: #{match.inspect}"
       match.save
     else
       params['player1_id'] = player1id
@@ -136,7 +155,7 @@ class MatchesController < ApplicationController
       params.delete :player1_name
       params.delete :player2_name
       params['match'] = params
-      puts "****************** in record match, params: #{match_params}"
+      puts "****************** in record match, new match , params: #{match_params}"
       match = Match.create(match_params)
       match.save
    end
@@ -144,7 +163,9 @@ class MatchesController < ApplicationController
       match_hash = match.as_json
       match_hash['player1_name'] = player1name
       match_hash['player2_name'] = player2name
+      puts "*********** Getting to end of record service, about to render JSON ***********"
       format.json { render :json => match_hash.to_json }
+      # format.json { render :json => {:what => 'ever'} }
     end
   end
 
@@ -189,6 +210,14 @@ class MatchesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def match_params
-      params.require(:match).permit(:player1_id, :player2_id, :tourney_id, :round, :player1_score, :player2_score, :ties)
+      params.require(:match).permit(:match_id, :player1_id, :player2_id, :tourney_id, :round, :player1_score, :player2_score, :ties)
+    end
+    # Confirms a logged-in user.
+    def logged_in_user
+      unless logged_in?
+        store_location
+        flash[:danger] = "Please log in."
+        redirect_to login_url
+      end
     end
 end
