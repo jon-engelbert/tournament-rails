@@ -28,8 +28,8 @@ class TourneysController < ApplicationController
     # puts "******* player_name_list #{@player_names}"
     # puts "******* player_email_list #{@player_emails}"
     # puts "******* players_remaining_names #{@players_remaining_names}"
-    @entrant_names = ''
-    @entrant_emails = ''
+    @entrant_names = []
+    @entrant_emails = []
   end
 
   # GET /tourneys/1/edit

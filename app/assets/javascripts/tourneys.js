@@ -25,7 +25,10 @@ $(document).on ('ready page:load', function() {
       // find the corresponding email, add it to the list.
       var players = $('#players').data('list');
       var email = players[position].email;
-      $("#new_player").hide();
+      console.log("email: " + email);
+      console.log("name: " + name);
+      console.log("position: " + position);
+      $(".hidden-section").hide();
       $("#entrant_name_list").append('<li>' + name + '</li>');
       $("#entrant_email_list").append('<li>' + email + '</li>');
       var player_name_array = $('#players').data('name');
@@ -45,10 +48,12 @@ $(document).on ('ready page:load', function() {
       entrantEmails.push(email);
       $('#tourney_entrant_names').val(entrantNames);
       $('#tourney_entrant_emails').val(entrantEmails);
+      console.log("done with position>=0 in addButton click");
     } else {
+      console.log("in else branch, position <0,  in addButton click");
       // var url = "http://" + hostAddress + $('#newplayerlink').data('link');
       // $(location).attr('href',url);
-      $("#new_player").show();
+      $(".hidden-section").show();
       $('#player_name').val(name);
       $('#player_email').val('');
     }
@@ -63,13 +68,13 @@ $(document).on ('ready page:load', function() {
     // entrantEmails += email + "\r\n";
     $("#tourney_entrant_names").val(entrantNames) ;
     // $("#tourney_entrant_emails").val(entrantEmails) ;
-    $("#new_player").hide();
+    $(".hidden-section").hide();
     $('#entrants').data('name').add(selectedVal);
     $('#entrants').data('email').add(email);
   });
   $("#cancel_button").click(function (e) {
     e.preventDefault();
-    $("#new_player").hide();
+    $(".hidden-section").hide();
   });
     $("#removeButton").click(function (e) {
     e.preventDefault();
