@@ -34,16 +34,20 @@
   <div class="entrant_names" id="entrant_name_div">
     <%= f.label 'Entrant Names' %><br>
     <ul id="entrant_name_list">
-      <% @entrant_name_list.each do |name| %>
-        <li><%= name %></li>
+      <% if @entrant_name_list.present? %>
+        <% @entrant_name_list.each do |name| %>
+          <li><%= name %></li>
+        <% end %>
       <% end %>
     </ul>
   </div>
   <div class="entrant_emails" id="entrant_email_div" >
     <%= f.label 'Entrant Emails' %><br>
     <ul id="entrant_email_list">
-      <% @entrant_email_list.each do |email| %>
-        <li><%= email %></li>
+      <% if @entrant_email_list.present? %>
+        <% @entrant_email_list.each do |email| %>
+          <li><%= email %></li>
+        <% end %>
       <% end %>
     </ul>
   </div>
