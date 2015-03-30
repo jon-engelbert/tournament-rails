@@ -18,3 +18,6 @@
 
 # Ignore Spring files.
 /spring/*.pid
+
+#ignore local environment settings
+/config/local_env.yml

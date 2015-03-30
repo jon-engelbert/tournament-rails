@@ -35,6 +35,12 @@ $(document).on ('ready page:load', function() {
       $('#players').data('name', player_name_array);
       $('#players').data('email', player_email_array);
       $("#autocomplete-1").autocomplete( "option", "source", $('#players').data('name'));
+      if (!entrantNames) {
+        entrantNames = [];
+      }
+      if (!entrantEmails) {
+        entrantEmails = [];
+      }
       entrantNames.push(name);
       entrantEmails.push(email);
       $('#tourney_entrant_names').val(entrantNames);
