@@ -1,10 +1,3 @@
-<head>
-   <meta charset="utf-8">
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-   <!-- Javascript -->
-</head>
 <h1>Tourney Brackets</h1>
 
 <div class="player_names" id="player_area">
@@ -15,11 +8,11 @@
     <div id= "round_matches" class = "matchups">
     <% @matches.select {|match| match.round == round}.each do |match| %>
       <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "matchup side-by-side ui-widget-content">
-        <section>
+        <section class="static-div">
         <% if logged_in? %>
-          <div id = "player1_<%=match.id%>" class = "draggable droppable left-div ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+          <div id = "player1_<%=match.id%>" class = "left-div draggable droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% else %>
-          <div id = "player1_<%=match.id%>" class = "left-div " data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>">
+          <div id = "player1_<%=match.id%>" class = "left-div " draggable="false" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% end %>
           <%= match.player1_name %>
           </div>
@@ -27,20 +20,20 @@
             vs
           </div>
         <% if logged_in? %>
-          <div id = "player2_<%=match.id%>" class = "draggable droppable right-div ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
+          <div id = "player2_<%=match.id%>" class = "right-div draggable droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% else %>
-          <div id = "player2_<%=match.id%>" class = "right-div " data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>">
+          <div id = "player2_<%=match.id%>" class = "right-div " data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% end %>
             <%= match.player2_name %> 
           </div>
         </section>
         <section class = "scores">
         <% if not logged_in? %>
-          <div id= "score_<%=match.id%>"  > 
+          <div id= "score_<%=match.id%>" draggable="false" > 
             <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>)
           </div>
         <% elsif match.player1_score + match.player2_score + match.ties > 0 %>
-          <div id= "score_<%=match.id%>" title="Edit Match Scores" class="editMatchButton" 
+          <div id= "score_<%=match.id%>" draggable="false" class="editMatchButton" title="Edit Match Scores"
           data-player1name="<%= match.player1_name%>"
           data-player2name="<%= match.player2_name%>"
           data-player1wins="<%= match.player1_score%>"
@@ -51,7 +44,7 @@
             <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>) -- click to edit
           </div>
         <% else %>
-          <div id= "score_<%=match.id%>" class="editMatchButton" title="Edit Match Scores"
+          <div id= "score_<%=match.id%>" draggable="false" class="editMatchButton" title="Edit Match Scores"
           data-player1name="<%= match.player1_name%>"
           data-player2name="<%= match.player2_name%>"
           data-player1wins="<%= match.player1_score%>"

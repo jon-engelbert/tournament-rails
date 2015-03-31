@@ -34,9 +34,9 @@
   <div class="entrant_names" id="entrant_name_div">
     <%= f.label 'Entrant Names' %><br>
     <ul id="entrant_name_list">
-      <% if @entrant_name_list.present? %>
-        <% @entrant_name_list.each do |name| %>
-          <li><%= name %></li>
+      <% if @entrants.present? %>
+        <% @entrants.each do |entrant| %>
+          <li><%= entrant.name %></li>
         <% end %>
       <% end %>
     </ul>
@@ -44,9 +44,9 @@
   <div class="entrant_emails" id="entrant_email_div" >
     <%= f.label 'Entrant Emails' %><br>
     <ul id="entrant_email_list">
-      <% if @entrant_email_list.present? %>
-        <% @entrant_email_list.each do |email| %>
-          <li><%= email %></li>
+      <% if @entrants.present? %>
+        <% @entrants.each do |entrant| %>
+          <li><%= entrant.email %></li>
         <% end %>
       <% end %>
     </ul>

@@ -51,6 +51,7 @@ class TourneysController < ApplicationController
       @entrant_emails += entrant.email
       @entrant_emails += "\r\n"
     end
+    puts "******* entrant_name_list #{@entrant_name_list.inspect}"
     puts "******* entrant_names #{@entrant_names}"
     puts "******* entrant_emails #{@entrant_emails}"
     puts "******* players_remaining_names #{@players_remaining_names}"
@@ -100,8 +101,8 @@ class TourneysController < ApplicationController
     @tourney.user_id = current_user.id
 
     if @tourney.save
-      names = tourney_params[:entrant_names].split("\r\n")
-      emails = tourney_params[:entrant_emails].split("\r\n")
+      names = tourney_params[:entrant_names].split(",")
+      emails = tourney_params[:entrant_emails].split(",")
       entrants = names.zip(emails)
       puts entrants
       entrants.each do |name, email|

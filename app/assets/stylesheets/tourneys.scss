@@ -1,23 +1,34 @@
 // Place all the styles related to the Tourneys controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.static-div {
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+}
 .left-div {
     float: left;
     width: 120px;
     padding: 0.5em; 
-    margin-right: 8px;
+    margin-left: 0px;
+    overflow: hidden;
+    height: 100%;
 }
 .middle-div {
     float: left;
     width: 50px;
 	padding: 0.5em; 
 	margin: 0px;
+    overflow: hidden;
+    height: 100%;
 }​
 .right-div {
     float: left;
     width: 120px;
     padding: 0.5em; 
-    margin-left: 208px;
+    margin-left: 0px;
+    overflow: hidden;
+    height: 100%;
 }
 .side-by-side {
     float: left;

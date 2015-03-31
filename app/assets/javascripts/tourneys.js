@@ -1,6 +1,8 @@
 $(document).on ('ready page:load', function() {
   var entrantNames = $('#entrants').data('name');
   var entrantEmails = $('#entrants').data('email');
+  var player_name_array = $('#players').data('name');
+  var player_email_array = $('#players').data('email');
   $(document).on("ajax:success", "#Edit_scores", function() {
       console.log('file sent!');
     console.log('yep');
@@ -19,22 +21,23 @@ $(document).on ('ready page:load', function() {
   $("#addButton").click(function (e) {
     e.preventDefault();
     var name = $('#autocomplete-1').val();
-    var position = $.inArray(name, $('#players').data('name'));
+    var position = $.inArray(name, player_name_array);
     // var hostAddress= top.location.host.toString();
     if (position >= 0) {
       // find the corresponding email, add it to the list.
-      var players = $('#players').data('list');
-      var email = players[position].email;
-      console.log("email: " + email);
-      console.log("name: " + name);
+      var email = player_email_array[position];
+      console.log("email: " + email );
+      console.log("name: " + name + " "  + player_name_array[position]);
       console.log("position: " + position);
       $(".hidden-section").hide();
       $("#entrant_name_list").append('<li>' + name + '</li>');
       $("#entrant_email_list").append('<li>' + email + '</li>');
-      var player_name_array = $('#players').data('name');
-      var player_email_array = $('#players').data('email');
+      console.log("player_name_array.length" + player_name_array.length);
+      console.log("player_email_array.length" + player_email_array.length);
       player_email_array.splice(position,1)
       player_name_array.splice(position,1)
+      console.log("player_name_array.length" + player_name_array.length);
+      console.log("player_email_array.length" + player_email_array.length);
       $('#players').data('name', player_name_array);
       $('#players').data('email', player_email_array);
       $("#autocomplete-1").autocomplete( "option", "source", $('#players').data('name'));
@@ -44,8 +47,12 @@ $(document).on ('ready page:load', function() {
       if (!entrantEmails) {
         entrantEmails = [];
       }
+      console.log("entrantNames.length: " + entrantNames.length);
+      console.log("entrantEmails.length: " + entrantEmails.length);
       entrantNames.push(name);
       entrantEmails.push(email);
+      console.log("entrantNames.length: " + entrantNames.length);
+      console.log("entrantEmails.length: " + entrantEmails.length);
       $('#tourney_entrant_names').val(entrantNames);
       $('#tourney_entrant_emails').val(entrantEmails);
       console.log("done with position>=0 in addButton click");
@@ -64,10 +71,11 @@ $(document).on ('ready page:load', function() {
     var email = $('#player_email').val();
       $("#entrant_name_list").append('<li>' + name + '</li>');
       $("#entrant_email_list").append('<li>' + email + '</li>');
-    entrantNames += name + "\r\n";
+      entrantNames.push(name);
+      entrantEmails.push(email);
     // entrantEmails += email + "\r\n";
     $("#tourney_entrant_names").val(entrantNames) ;
-    // $("#tourney_entrant_emails").val(entrantEmails) ;
+    $("#tourney_entrant_emails").val(entrantEmails) ;
     $(".hidden-section").hide();
     $('#entrants').data('name').add(selectedVal);
     $('#entrants').data('email').add(email);
@@ -85,8 +93,6 @@ $(document).on ('ready page:load', function() {
       // find the corresponding email, remove it from the list.
       var email = $('#entrants').data('email')[position];
       var players = $('#players').data('list');
-      var player_name_array = $('#players').data('name');
-      var player_email_array = $('#players').data('email');
       player_email_array.push(email)
       player_name_array.push(name)
       $('#players').data('name', player_name_array);
