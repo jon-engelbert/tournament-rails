@@ -6,41 +6,46 @@
     overflow: hidden;
     height: 100%;
 }
+
+.middle-div {
+    float: left;
+    width: 50px;
+    padding: 0.5em; 
+    margin: 0px;
+    overflow: hidden;
+}​
+
 .left-div {
     float: left;
     width: 120px;
     padding: 0.5em; 
     margin-left: 0px;
     overflow: hidden;
-    height: 100%;
 }
-.middle-div {
-    float: left;
-    width: 50px;
-	padding: 0.5em; 
-	margin: 0px;
-    overflow: hidden;
-    height: 100%;
-}​
+
 .right-div {
     float: left;
     width: 120px;
     padding: 0.5em; 
-    margin-left: 0px;
     overflow: hidden;
-    height: 100%;
 }
+
 .side-by-side {
     float: left;
     width: 300px;
     padding: 1.5em; 
     margin: 0px;
-    background-color: linen;
 }​
+
+.scores {clear:both; float: left;}
+
 .draggable {  padding: 0.5em; float: left; margin: 0px 0px 0px 0; }
+
 .droppable { padding: 0.5em; float: left; margin: 0px; }
+
 .matchups {clear:both; min-width: 280;}
-.scores {clear:both;float: left;}
+
+
 .edit-match {clear:both;float: left;}
 .editMatchButton:hover {
  cursor:pointer;

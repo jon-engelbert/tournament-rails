@@ -87,12 +87,16 @@ class TourneyService
 
   def self.get_unique_complete_player_ids tourney_id, round
     match_player_ids = Set.new
-    match_records = Match.where(tourney: tourney_id, round: round)
+    match_records = Match.where(tourney: tourney_id, round: round, bye: false)
     match_records.each do |match|
       match_player_ids << match.player1_id
       match_player_ids << match.player2_id
     end
     match_player_ids
+  end
+
+  def self.remove_bye_matches tourney_id, round
+    Match.where(tourney: tourney_id, round: round, bye: true).destroy_all
   end
 
 

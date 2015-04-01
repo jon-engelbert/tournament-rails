@@ -7,24 +7,32 @@
     <h2>Round <%=round%></h2>
     <div id= "round_matches" class = "matchups">
     <% @matches.select {|match| match.round == round}.each do |match| %>
-      <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "matchup side-by-side ui-widget-content">
+      <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "side-by-side ui-widget-content">
         <section class="static-div">
-        <% if logged_in? %>
+        <% if logged_in? && !match.bye %>
           <div id = "player1_<%=match.id%>" class = "left-div draggable droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% else %>
           <div id = "player1_<%=match.id%>" class = "left-div " draggable="false" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% end %>
-          <%= match.player1_name %>
+            <%= match.player1_name %>
           </div>
-          <div class="middle-div">
+          <div id = "mid_<%=match.id%>" class="middle-div">
+          <% if match.bye %>
+            bye
+          <% else %>
             vs
-          </div>
-        <% if logged_in? %>
+          <% end %>
+        </div>
+        <% if logged_in? && !match.bye %>
           <div id = "player2_<%=match.id%>" class = "right-div draggable droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% else %>
-          <div id = "player2_<%=match.id%>" class = "right-div " data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
+          <div id = "player2_<%=match.id%>" class = "right-div" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% end %>
+          <% if match.bye %>
+            --
+          <% else %>
             <%= match.player2_name %> 
+          <% end %>
           </div>
         </section>
         <section class = "scores">

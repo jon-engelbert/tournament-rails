@@ -50,7 +50,7 @@ $(document).on ('ready page:load', function() {
           dialog.dialog( "close" );
   })
   $('.submitScores').click(function(e) {
-    submitScores();
+    submitScores(e);
   })
   var dialog = $( "#Edit_scores" ).dialog({
       autoOpen: false,
@@ -64,7 +64,7 @@ $(document).on ('ready page:load', function() {
       }
     });
 
-  function submitScores() {
+  function submitScores(e) {
     var match_id = $("#match_id").val();
     var score1 = $("#player1_wins").val();
     var score2 = $("#player2_wins").val();
@@ -72,6 +72,7 @@ $(document).on ('ready page:load', function() {
     var round = $("#round").val();
     var ties = $("#ties").val();
     // $("#score_" + match_id).text(score1 + " - " + score2 + "  (" + ties + ")");
+    e.preventDefault();
     $.ajax({
       type: "POST",
       url: recordmatch_path,

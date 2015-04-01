@@ -56,6 +56,7 @@ $(document).on ('ready page:load', function() {
       $('#tourney_entrant_names').val(entrantNames);
       $('#tourney_entrant_emails').val(entrantEmails);
       console.log("done with position>=0 in addButton click");
+      $("#autocomplete-1").val("");
     } else {
       console.log("in else branch, position <0,  in addButton click");
       // var url = "http://" + hostAddress + $('#newplayerlink').data('link');
@@ -79,6 +80,7 @@ $(document).on ('ready page:load', function() {
     $(".hidden-section").hide();
     $('#entrants').data('name').add(selectedVal);
     $('#entrants').data('email').add(email);
+    $("#autocomplete-1").val("");
   });
   $("#cancel_button").click(function (e) {
     e.preventDefault();
@@ -108,6 +110,7 @@ $(document).on ('ready page:load', function() {
       $("#autocomplete-removeentrants").autocomplete( "option", "source", entrantNames);
       $("#entrant_name_list li").eq(position).remove();
       $("#entrant_email_list li").eq(position).remove();
+      $("#autocomplete-removeentrant").val("");
     }
   });
 

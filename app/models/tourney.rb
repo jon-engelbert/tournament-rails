@@ -171,6 +171,7 @@ class Tourney < ActiveRecord::Base
     # one round at a time, massage matches into the format for the view
     # for the most recent round, generate new pairings for unmatched entrants
     # need to check if the most recent round has results for all matches- if so, then generate pairings for the next round.
+    TourneyService.remove_bye_matches id, max_round
     matches = []
     match_records = Match.where(tourney_id: id)
     match_records.each do |match|
