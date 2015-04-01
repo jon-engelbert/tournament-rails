@@ -23,7 +23,7 @@
     <%= f.label :location %><br>
     <%= f.text_field :location %>
   </div>
-  <div id="entrant_name" style="display: none;">
+<!--   <div id="entrant_name" style="display: none;">
     <%= f.label 'Entrant Names' %><br>
     <%= f.text_area :entrant_names %>
   </div>
@@ -31,45 +31,35 @@
     <%= f.label 'Entrant Emails' %><br>
     <%= f.text_area :entrant_emails %>
   </div>
-  <div class="entrant_names" id="entrant_name_div">
-    <%= f.label 'Entrant Names' %><br>
-    <ul id="entrant_name_list">
-      <% if @entrants.present? %>
-        <% @entrants.each do |entrant| %>
-          <li><%= entrant.name %></li>
+ -->  
+  <table id="players_and_entrants">
+    <tr>
+      <td><%= f.label 'Players in Database' %></td>
+      <td></td>
+      <td><%= f.label 'Tournament Entrants' %></td>
+    </tr>
+    <tr>
+      <td>
+        <select multiple size="10" name="Players" id="Players" style="width:150">
+        <% if @players_remaining.present? %>
+          <% @players_remaining.each do |player| %>
+            <option value=<%= player.name %>><%= player.name %></option>
+          <% end %>
         <% end %>
-      <% end %>
-    </ul>
-  </div>
-  <div class="entrant_emails" id="entrant_email_div" >
-    <%= f.label 'Entrant Emails' %><br>
-    <ul id="entrant_email_list">
-      <% if @entrants.present? %>
-        <% @entrants.each do |entrant| %>
-          <li><%= entrant.email %></li>
-        <% end %>
-      <% end %>
-    </ul>
-  </div>
-  <section class="add_and_remove_section">
-    <div class="add_player_section">
-      <div class="playerfield">
-        <input id="autocomplete-1" class = "left-button">
-        <button id="addButton" class = "right-div">Add To Tournament</button>
-      </div>
-      <div id="new_player" class="hidden-section">
-        <p>Player Name: <input type="text" id="player_name" /></p>
-        <p>Player Email: <input type="text" id="player_email" /></p>
-        <button id="create_button">Create and Enter</button>
-        <button id="cancel_button">Cancel</button>
-      </div>
-    </div>
-    <div class="remove_player_section">
-      <input id="autocomplete-removeentrant" class = "left-button">
-      <button id="removeButton" class = "right-div">Remove From Tournament</button>
-    </div>
-  </section>
+        </select>
+      </td>
+      <td align="center" valign="middle">
+        <input type="button" class="moveToEntrant" value="->"><br />
+        <input type="button" class="moveFromEntrant" value="<-">
+      </td>
+      <td>
+        <%= f.select(:entrant_names, @entrants.collect {|p| [ p.name ] }, 
+                                           { }, 
+                                           { multiple: true, size: 10, width: 150 }) %>
+      </td>
+    </tr>
+  </table>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit class: "select_before_submit"%>
   </div>
 <% end %>

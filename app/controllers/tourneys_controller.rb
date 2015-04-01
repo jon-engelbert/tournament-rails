@@ -101,11 +101,9 @@ class TourneysController < ApplicationController
     @tourney.user_id = current_user.id
 
     if @tourney.save
-      names = tourney_params[:entrant_names].split(",")
-      emails = tourney_params[:entrant_emails].split(",")
-      entrants = names.zip(emails)
+      entrants = tourney_params[:entrant_names].split(",")
       puts entrants
-      entrants.each do |name, email|
+      entrants.each do |name|
         entrant  = Player.find_by name: name
         if entrant.present?
           begin
@@ -114,12 +112,12 @@ class TourneysController < ApplicationController
              logger.error("Message for the log file #{exc.message}")
              flash[:notice] = "Store error message"
           end
-        else
-          puts "********* name, email: #{name} #{email}"
-          entrant = Player.new({name: name, email: email})
-          puts "********* entrant #{entrant}"
-          entrant.save
-          @tourney.players << entrant
+        # else
+        #   puts "********* name, email: #{name} #{email}"
+        #   entrant = Player.new({name: name, email: email})
+        #   puts "********* entrant #{entrant}"
+        #   entrant.save
+        #   @tourney.players << entrant
         end
       end
       redirect_to @tourney, notice: 'Tourney was successfully created.'
@@ -133,24 +131,26 @@ class TourneysController < ApplicationController
   def update
     respond_to do |format|
       puts "params: #{params.inspect}"
+      puts "***************** tourney_params: #{tourney_params.inspect}"
       puts "***************** @tourney.players #{@tourney.players}"
       if @tourney.update(tourney_params)
         #store entrants
-        names = tourney_params[:entrant_names].split(",")
-        emails = tourney_params[:entrant_emails].split(",")
-        entrants = names.zip(emails)
-        puts entrants
+        puts "*************** entrant_names: #{tourney_params[:entrant_names]}"
+        # emails = tourney_params[:entrant_emails].split(",")
+        names = tourney_params[:entrant_names]
+        puts names
         #add un-found entrants
-        entrants.each do |name, email|
+        names.each do |name|
           entrant  = Player.find_by name: name
           if entrant.present?
+            puts "*********** entrant.present #{name}"
             if !@tourney.players.include? entrant
               @tourney.players << entrant
             end
-          else
-            entrant = Player.new({name: name, email: email})
-            entrant.save
-            @tourney.players << entrant
+          # else
+          #   entrant = Player.new({name: name, email: email})
+          #   entrant.save
+          #   @tourney.players << entrant
             # @tourney.entrants << entrant
           end
         end
@@ -195,7 +195,7 @@ class TourneysController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def tourney_params
-      params.require(:tourney).permit(:name, :date, :location, :entrant_names, :entrant_emails)
+      params.require(:tourney).permit(:name, :date, :location, :entrant_names => [])
     end
 
     # Confirms a logged-in user.

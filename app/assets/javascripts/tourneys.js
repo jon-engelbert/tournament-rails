@@ -86,7 +86,7 @@ $(document).on ('ready page:load', function() {
     e.preventDefault();
     $(".hidden-section").hide();
   });
-    $("#removeButton").click(function (e) {
+  $("#removeButton").click(function (e) {
     e.preventDefault();
     var name = $('#autocomplete-removeentrant').val();
     var position = $.inArray(name, $('#entrants').data('name'));
@@ -114,4 +114,114 @@ $(document).on ('ready page:load', function() {
     }
   });
 
+  $(".moveToEntrant").click(function(e) 
+  {
+    var tbFrom = document.getElementById('Players');
+    var tbTo = document.getElementById('tourney_entrant_names');
+    var arrFrom = new Array(); 
+    var arrTo = new Array(); 
+    var arrLU = new Array();
+    var i;
+    console.log("To options: "+ tbTo.options);
+    console.log("From options: "+ tbFrom.options);
+    for (i = 0; i < tbTo.options.length; i++) 
+    {
+      arrLU[tbTo.options[i].text] = tbTo.options[i].value;
+      arrTo[i] = tbTo.options[i].text;
+    }
+    var fLength = 0;
+    var tLength = arrTo.length;
+    for(i = 0; i < tbFrom.options.length; i++) 
+    {
+      arrLU[tbFrom.options[i].text] = tbFrom.options[i].value;
+      if (tbFrom.options[i].selected && tbFrom.options[i].value != "") 
+      {
+       arrTo[tLength] = tbFrom.options[i].text;
+       tLength++;
+      }
+      else 
+      {
+       arrFrom[fLength] = tbFrom.options[i].text;
+       fLength++;
+      }
+    }
+
+    tbFrom.length = 0;
+    tbTo.length = 0;
+    var ii;
+
+    for(ii = 0; ii < arrFrom.length; ii++) 
+    {
+      var no = new Option();
+      no.value = arrLU[arrFrom[ii]];
+      no.text = arrFrom[ii];
+      tbFrom[ii] = no;
+    }
+
+    for(ii = 0; ii < arrTo.length; ii++) 
+    {
+      var no = new Option();
+      no.value = arrLU[arrTo[ii]];
+      no.text = arrTo[ii];
+      tbTo[ii] = no;
+    }
+  });
+
+  $(".moveFromEntrant").click(function(e) 
+  {
+    var tbFrom = document.getElementById('tourney_entrant_names');
+    var tbTo = document.getElementById('Players');
+    var arrFrom = new Array(); var arrTo = new Array(); 
+    var arrLU = new Array();
+    var i;
+    console.log("To options: "+ tbTo.options);
+    console.log("From options: "+ tbFrom.options);
+    for (i = 0; i < tbTo.options.length; i++) 
+    {
+      arrLU[tbTo.options[i].text] = tbTo.options[i].value;
+      arrTo[i] = tbTo.options[i].text;
+    }
+    var fLength = 0;
+    var tLength = arrTo.length;
+    for(i = 0; i < tbFrom.options.length; i++) 
+    {
+      arrLU[tbFrom.options[i].text] = tbFrom.options[i].value;
+      if (tbFrom.options[i].selected && tbFrom.options[i].value != "") 
+      {
+       arrTo[tLength] = tbFrom.options[i].text;
+       tLength++;
+      }
+      else 
+      {
+       arrFrom[fLength] = tbFrom.options[i].text;
+       fLength++;
+      }
+    }
+
+    tbFrom.length = 0;
+    tbTo.length = 0;
+    var ii;
+
+    for(ii = 0; ii < arrFrom.length; ii++) 
+    {
+      var no = new Option();
+      no.value = arrLU[arrFrom[ii]];
+      no.text = arrFrom[ii];
+      tbFrom[ii] = no;
+    }
+
+    for(ii = 0; ii < arrTo.length; ii++) 
+    {
+      var no = new Option();
+      no.value = arrLU[arrTo[ii]];
+      no.text = arrTo[ii];
+      tbTo[ii] = no;
+    }
+  });
+  $(".select_before_submit").click(function(e)
+  {
+    $('#tourney_entrant_names option').each(function () {
+            $(this).attr('selected', true);
+        });
+  })
 });
