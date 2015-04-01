@@ -101,9 +101,9 @@ class TourneysController < ApplicationController
     @tourney.user_id = current_user.id
 
     if @tourney.save
-      entrants = tourney_params[:entrant_names].split(",")
-      puts entrants
-      entrants.each do |name|
+      names = tourney_params[:entrant_names]
+      puts names
+      names.each do |name|
         entrant  = Player.find_by name: name
         if entrant.present?
           begin
