@@ -7,12 +7,17 @@ RSpec.describe "Tournaments", type: :request do
       get tourneys_path
       expect(response).to have_http_status(200)
     end
-    it "delete link is available for the creator" do
+    it "user can set points for win, bye, tie" do
       user = FactoryGirl.build(:user)
       user.save
+      allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
       tour.user_id = user.id
-      get tourneys_path
-      
+      tour.save
+      get edit_tourney_path(tour.id)
+      expect(response.body).to include("win")
+      expect(response.body).to include("bye")
+      expect(response.body).to include("tie")
+
     end
   end
 end

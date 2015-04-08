@@ -17,6 +17,29 @@ class Match < ActiveRecord::Base
   	save
   end
 
+  def self.matchups matches
+    match_p1 = matches.map(&:player1_id)
+    match_p2 = matches.map(&:player2_id)
+    match_ups = []
+    if match_p1.present? 
+      match_ups = match_p1.zip(match_p2)
+    end
+  end
+
+  def self.matchup_sets matches
+    match_ups = matchups matches
+    matchup_sets = Set.new
+    if match_ups.present? 
+      match_ups.each do |p1, p2|
+        if (p1 >= p2)
+          matchup_sets.add([p1, p2])
+        else
+          matchup_sets.add([p2, p1])
+        end
+      end
+    end
+    matchup_sets
+  end
 
   def replace_player(player_old, player_new)
   # player_old should be the same as either player1_id or player2_id

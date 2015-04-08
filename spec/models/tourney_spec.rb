@@ -130,8 +130,8 @@ describe Tourney, type: :model do
 				if player_stand_prev
 					puts "player_standing_prev: #{player_stand_prev}"
 					puts "player_standing: #{player_standing}"
-					expect(player_standing[:win_pct] <= player_stand_prev[:win_pct]).to be_truthy
-					expect(player_standing[:win_pct] < player_stand_prev[:win_pct] || player_standing[:game_wins] <= player_stand_prev[:game_wins]).to be_truthy
+					expect(player_standing[:pts_per_match] <= player_stand_prev[:pts_per_match]).to be_truthy
+					expect(player_standing[:pts_per_match] < player_stand_prev[:pts_per_match] || player_standing[:game_wins] <= player_stand_prev[:game_wins]).to be_truthy
 				end
 				player_stand_prev = player_standing
 			end
@@ -157,7 +157,7 @@ describe Tourney, type: :model do
 		end
 		it "don't repeat previous matchup if possible" do
 			tour.save
-			players = FactoryGirl.build_list(:player, 16)
+			players = FactoryGirl.build_list(:player, 8)
 			i = 0
 			players.each do |player| 
 				player.name = "bob#{i}"
@@ -167,43 +167,81 @@ describe Tourney, type: :model do
 			end
 			match_standings, bye_player = tour.brackets
 			matches = Match.all
-			expect(matches.count).to eq(8)
+			expect(matches.count).to eq(4)
+			match_set = Match.matchup_sets(matches)
+			puts "********* match_set: #{match_set.inspect}"
+			expect(match_set.count).to eq(4)
 			matches.each do |match|
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id
+      		good_enough_penalty = match_set.count / 3
+			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			matches = Match.all
+			expect(matches.count).to eq(8)
+			match_set = Match.matchup_sets(matches)
+			puts "********* match_set: #{match_set.inspect}"
+			expect(match_set.count).to eq(8)
+			matches.each do |match|
+				match.update_attribute(:player1_score, 1)
+				match.update_attribute(:player2_score, 1)
+			end
+      		good_enough_penalty = match_set.count / 3
+			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			matches = Match.all
+			expect(matches.count).to eq(12)
+			match_set = Match.matchup_sets(matches)
+			expect(match_set.count).to eq(12)
+			matches.each do |match|
+				match.update_attribute(:player1_score, 1)
+				match.update_attribute(:player2_score, 1)
+			end
+      		good_enough_penalty =  match_set.count / 3
+			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(16)
-			match_set = Set.new matches
+			match_set = Match.matchup_sets(matches)
 			expect(match_set.count).to eq(16)
 			matches.each do |match|
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id
+      		good_enough_penalty =  match_set.count / 3
+			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			matches = Match.all
+			expect(matches.count).to eq(20)
+			match_set = Match.matchup_sets(matches)
+			expect(match_set.size).to eq(20)
+			matches.each do |match|
+				match.update_attribute(:player1_score, 1)
+				match.update_attribute(:player2_score, 1)
+			end
+      		good_enough_penalty =  match_set.count / 3
+			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(24)
-			match_set = Set.new matches
-			expect(match_set.count).to eq(24)
+			match_set = Match.matchup_sets(matches)
+			expect(match_set.size).to eq(24)
 			matches.each do |match|
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id
+      		good_enough_penalty = match_set.count / 2
+			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			matches = Match.all
+			expect(matches.count).to eq(28)
+			match_set = Match.matchup_sets(matches)
+			expect(match_set.size).to eq(28)
+			matches.each do |match|
+				match.update_attribute(:player1_score, 1)
+				match.update_attribute(:player2_score, 1)
+			end
+      		good_enough_penalty = match_set.count / 2
+			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(32)
-			match_set = Set.new matches
-			expect(match_set.count).to eq(32)
-			matches.each do |match|
-				match.update_attribute(:player1_score, 1)
-				match.update_attribute(:player2_score, 1)
-			end
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id
-			matches = Match.all
-			expect(matches.count).to eq(40)
-			match_set = Set.new matches
-			expect(match_set.size).to eq(40)
+			match_set = Match.matchup_sets(matches)
+			expect(match_set.size).not_to eq(32)
 		end
 	end
 end

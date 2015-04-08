@@ -64,7 +64,8 @@ class TourneysController < ApplicationController
     # in response to user clicking on "generate next round".
     # if current round is complete, then proceed.
     @tourney = Tourney.find(params[:id])
-    TourneyService.generate_brackets_next params[:id]
+    good_enough_penalty = Match.count / 3
+    TourneyService.generate_brackets_next params[:id], good_enough_penalty
     @matches, @bye_player = @tourney.brackets
     @max_round = Match.where(tourney: params[:id]).maximum(:round)
     @max_round = 0 if @max_round.nil?
@@ -198,7 +199,7 @@ class TourneysController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def tourney_params
-      params.require(:tourney).permit(:name, :date, :location, :entrant_names => [])
+      params.require(:tourney).permit(:name, :date, :location, :points_win, :points_tie, :points_bye, :entrant_names => [])
     end
 
     # Confirms a logged-in user.

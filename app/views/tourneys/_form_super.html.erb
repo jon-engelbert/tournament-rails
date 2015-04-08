@@ -23,6 +23,18 @@
     <%= f.label :location %><br>
     <%= f.text_field :location %>
   </div>
+  <div class="field">
+    <%= f.label :points_win %><br>
+    <%= f.number_field :points_win %>
+  </div>
+  <div class="field">
+    <%= f.label :points_tie %><br>
+    <%= f.number_field :points_tie %>
+  </div>
+  <div class="field">
+    <%= f.label :points_bye %><br>
+    <%= f.number_field :points_bye %>
+  </div>
 <!--   <div id="entrant_name" style="display: none;">
     <%= f.label 'Entrant Names' %><br>
     <%= f.text_area :entrant_names %>
@@ -53,9 +65,15 @@
         <input type="button" class="moveFromEntrant" value="<-">
       </td>
       <td>
-        <%= f.select(:entrant_names, @entrants.collect {|p| [ p.name ] }, 
+        <% if @entrants.present? %>
+          <%= f.select(:entrant_names, @entrants.collect {|p| [ p.name ] }, 
                                            { }, 
                                            { multiple: true, size: 10, width: 150 }) %>
+        <% else %>
+          <%= f.select(:entrant_names, [], 
+                                           { }, 
+                                           { multiple: true, size: 10, width: 150 }) %>
+        <% end %>
       </td>
     </tr>
   </table>

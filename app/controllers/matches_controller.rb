@@ -64,7 +64,6 @@ class MatchesController < ApplicationController
     begin
       match1 = Match.find_by(id: params['match1_id'])
       match2 = Match.find_by(id: params['match2_id'])
-      puts "******************* matches: #{match1.inspect} #{match2.inspect}"
     rescue Exception => exc
       logger.error("match not found: Message for the log file #{exc.message}, #{player1id}, #{player2id}, #{tourney_id}, #{params['round']}")
       flash[:notice] = "Swap aborted"
@@ -85,9 +84,6 @@ class MatchesController < ApplicationController
     response_hash['success'] = !error
     response_hash['player1_name'] = player1name
     response_hash['player2_name'] = player2name
-    puts "************** match_hash: #{response_hash.inspect}"
-    puts "************** match_hash.to_json: #{response_hash.to_json.inspect}"
-    puts "************** request.xhr: #{request.xhr?}"
     # format.json { render :json => response_hash.to_json }
     render json: response_hash.to_json and return if request.xhr?
   end
