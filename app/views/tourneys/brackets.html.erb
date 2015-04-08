@@ -1,5 +1,4 @@
 <h1>Tourney Brackets</h1>
-
 <div class="player_names" id="player_area">
   <% round = 0 %>
   <% while round <= @max_round do%>
@@ -9,7 +8,7 @@
     <% @matches.select {|match| match.round == round}.each do |match| %>
       <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "side-by-side ui-widget-content">
         <section class="static-div">
-        <% if logged_in? && !match.bye %>
+        <% if logged_in_as_tourney_admin?(@tourney) && !match.bye %>
           <div id = "player1_<%=match.id%>" class = "left-div draggable droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% else %>
           <div id = "player1_<%=match.id%>" class = "left-div " draggable="false" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
@@ -23,7 +22,7 @@
             vs
           <% end %>
         </div>
-        <% if logged_in? && !match.bye %>
+        <% if logged_in_as_tourney_admin?(@tourney) && !match.bye %>
           <div id = "player2_<%=match.id%>" class = "right-div draggable droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% else %>
           <div id = "player2_<%=match.id%>" class = "right-div" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
@@ -36,7 +35,7 @@
           </div>
         </section>
         <section class = "scores">
-        <% if not logged_in? %>
+        <% if not logged_in_as_tourney_admin?(@tourney) %>
           <div id= "score_<%=match.id%>" draggable="false" > 
             <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>)
           </div>

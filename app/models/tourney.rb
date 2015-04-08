@@ -126,15 +126,17 @@ class Tourney < ActiveRecord::Base
       match_losses = playermatches.count {|match| match.player1_score < match.player2_score}
       match_ties = playermatches.count {|match| match.player1_score == match.player2_score}
       match_byes = playermatches.count {|match| match.bye}
+      game_wins = playermatches.sum {|match| match.player1_score}
+      game_losses = playermatches.sum {|match| match.player2_score}
       match_points = 3*match_wins + match_ties + 3* match_byes
       total_games = match_wins + match_losses + match_ties
       win_pct = total_games == 0 ? 0 : (3.0*match_wins + match_ties) / total_games
-      standing = {player_id: player.id, name: player.name, wins: match_wins, losses: match_losses, ties: match_ties, total_matches: total_games, points: match_points, win_pct: win_pct, player: player}
+      standing = {player_id: player.id, name: player.name, wins: match_wins, losses: match_losses, ties: match_ties, total_matches: total_games, points: match_points, win_pct: win_pct, game_wins: game_wins, game_losses: game_losses, player: player}
       puts "standing #{standing}"
       standings << standing
     end
     puts "*********************** standings: #{standings.inspect}"
-    player_standings = standings.sort_by{|a| a[:win_pct]}.reverse
+    player_standings = standings.sort_by{|a| [a[:win_pct], a[:game_wins]]}.reverse
     puts "*********************** standings: #{player_standings.inspect}"
     player_standings
     # player1matches = matches   #.select("Player.id as player_id, player.name as name, match.player1_score as wins, match.player2_score as losses, match.ties as ties").order(name: :desc)

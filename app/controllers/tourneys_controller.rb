@@ -7,6 +7,8 @@ class TourneysController < ApplicationController
   # GET /tourneys
   # GET /tourneys.json
   def index
+    puts "current_user: #{current_user.inspect}"
+    @curr_user = current_user
     @tourneys = Tourney.all
   end
 
@@ -75,6 +77,7 @@ class TourneysController < ApplicationController
     @matches, @bye_player = @tourney.brackets
     @max_round = Match.where(tourney: params[:id]).maximum(:round)
     @max_round = 0 if @max_round.nil?
+    puts "***************** tourney: #{@tourney.inspect}"
     puts "**************** matches: #{@matches.inspect}"
     puts "**************** max_round: #{@max_round}"
     puts "**************** bye_player: #{@bye_player}"

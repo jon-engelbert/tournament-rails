@@ -12,13 +12,11 @@ class TourneysIndexTest < ActionDispatch::IntegrationTest
     log_in_as(@admin)
     get tourneys_path
     assert_template 'tourneys/index'
-    first_page_of_tourneys = Tourney.all
-    first_page_of_tourneys.each do |tourney|
-      assert_select 'a[href=?]', tourney_path(tourney), text: tourney.name
-      unless user == @admin
-        assert_select 'a[href=?]', tourney_path(tourney), text: 'delete',
-                                                    method: :delete
-      end
+    tourney_page = Tourney.all
+    # assert_select 'a[href=?]', tourney_path(tourney_page), text: 'Show'
+    unless current_user == @admin
+      assert_select 'a[href=?]', tourney_path(tourney_page), text: 'Delete',
+                                                  method: :delete
     end
     assert_difference 'Tourney.count', -1 do
       delete tourney_path(@t1)

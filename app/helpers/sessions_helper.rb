@@ -34,6 +34,12 @@ module SessionsHelper
     !current_user.nil?
   end
 
+  # Returns true if the user is logged in as the tourney admin, false otherwise.
+  def logged_in_as_tourney_admin?(tourney)
+    puts "********** in logged_in_as_tourney_admin, tourney: #{tourney}"
+    !current_user.nil? &&  (current_user.id == tourney.user_id || current_user.admin?)
+  end
+
   # Forgets a persistent session.
   def forget(user)
     user.forget
