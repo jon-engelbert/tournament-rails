@@ -101,7 +101,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player1_score, 2)
 				match.update_attribute(:player2_score, 1)
 			end
-			standings = tour.generate_standings players
+			standings = tour.generate_standings
 			expect(standings.length).to eq(21)
 		end
 		it "standings should order player with better record first" do
@@ -124,7 +124,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player2_score, match_no)
 				match_no += 1
 			end
-			standings = tour.generate_standings players
+			standings = tour.generate_standings 
 			player_stand_prev = nil
 			standings.each do |player_standing| 
 				if player_stand_prev

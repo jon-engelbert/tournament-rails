@@ -23,7 +23,6 @@ Rails.application.routes.draw do
     member do
       get 'brackets'
       get 'brackets_next'
-      get 'brackets_initial'
       get 'standings'
     end
   end

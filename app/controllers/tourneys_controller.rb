@@ -84,18 +84,13 @@ class TourneysController < ApplicationController
     puts "**************** bye_player: #{@bye_player}"
   end
 
-  # GET /tourneys/1/brackets_initial
-  def brackets_initial
-    @tourney = Tourney.find(params[:id])
-    @matches, @bye_player = TourneyService.generate_brackets_initial params[:id]
-  end
 
   # GET /standings
   # GET /standings.json
 
   def standings
     @tourney = Tourney.find(params[:id])
-    @player_standings = TourneyService.generate_standings params[:id]
+    @player_standings = @tourney.generate_standings
   end
 
   # POST /tourneys

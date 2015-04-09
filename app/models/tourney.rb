@@ -12,7 +12,7 @@ class Tourney < ActiveRecord::Base
     player_bye_id = nil
     if use_bye
       bye_player = players.sample
-      # puts "bye_player: #{bye_player}"
+      puts "bye_player: #{bye_player.inspect}"
     end
     is_begin_pair = true
     pairs = []
@@ -47,7 +47,7 @@ class Tourney < ActiveRecord::Base
       player[:total_matches] >= max_round
     }
     if use_bye && players_nobye.present?
-      player_bye = players_nobye.sample[0]
+      player_bye = players_nobye.sample[0][:player]
     end
     is_begin_pair = true
     prev_player = nil, player = nil
@@ -87,7 +87,7 @@ class Tourney < ActiveRecord::Base
     return pairs, player_bye
   end
 
-  def pairings_cost pairings, bye_player, previous_matchups, max_round, player_count
+  def pairings_cost pairings, bye_player_hash, previous_matchups, max_round, player_count
     cost = 0
     pairings.each do |player1, player2|
       cost += ((player1[:pts_per_match] - player2[:pts_per_match]) / points_win) ** 2
@@ -95,14 +95,17 @@ class Tourney < ActiveRecord::Base
         cost += player_count
       end
     end
-    cost += (max_round - bye_player.total_matches) * player_count * 2 if bye_player
+    puts "*******!!!!!!!! pairings_cost, bye_player_hash: #{cost}, #{bye_player_hash}"
+    cost += (max_round - bye_player_hash[:total_matches]) * player_count * 2 if bye_player_hash
+    puts "*******!!!!!!!! pairings_cost, bye_player_hash: #{cost}, #{bye_player_hash}"
     return cost
   end
 
-  def generate_optimal_pairing player_standings, good_enough_penalty
-    puts "****!!!!!!!******!!!!!! in generate_optimal_pairing"
+  def generate_optimal_pairing_exhaustive player_standings, good_enough_penalty
+    puts "****!!!!!!!******!!!!!! in generate_optimal_pairing, player_standings count: #{player_standings.count}"
     max_round = Match.where(tourney: id).maximum(:round)
     max_round = 0 if max_round.nil?
+    bye_player_hash = nil
     bye_player = nil
     player_pairs = []
     min_cost = player_standings.count ** 3
@@ -113,12 +116,15 @@ class Tourney < ActiveRecord::Base
 #first, try the standings in linear order
       player_standings.each_slice(2) do |player_pair| 
         if player_pair.size == 2
+          puts "In generate_optimal_pairing, player_pair : #{player_pair.inspect}"
           player_pairs << player_pair
         else
-          bye_player = player_pair[0]
+          puts "In generate_optimal_pairing, player_pair (only one): #{player_pair.inspect}"
+          bye_player_hash = player_pair[0]
+          bye_player = bye_player_hash[:player]
         end
       end
-      cost = pairings_cost(player_pairs, bye_player, previous_matchups, max_round, player_standings.count)
+      cost = pairings_cost(player_pairs, bye_player_hash, previous_matchups, max_round, player_standings.count)
       if cost == 0
         return player_pairs, bye_player
       elsif cost < good_enough_penalty
@@ -135,10 +141,12 @@ class Tourney < ActiveRecord::Base
         if player_pair.size == 2
           player_pairs << player_pair
         else
-          bye_player = player_pair[0]
+          bye_player_hash = player_pair[0]
+          bye_player = bye_player_hash[:player]
+          puts "In generate_optimal_pairing, bye_player: #{bye_player.inspect}"
         end
       end
-      cost = pairings_cost(player_pairs, bye_player, previous_matchups, max_round, player_standings.count)
+      cost = pairings_cost(player_pairs, bye_player_hash, previous_matchups, max_round, player_standings.count)
       if cost == 0
         return player_pairs, bye_player
       elsif cost < good_enough_penalty
@@ -152,9 +160,10 @@ class Tourney < ActiveRecord::Base
     return min_cost_pairs, min_cost_bye_player
   end
 
-  def generate_standings player_list
+  def generate_standings 
     """ what about byes? """
     standings = []
+    player_list = players
 
     player1records = []
     player_list.each do |player|
@@ -168,13 +177,14 @@ class Tourney < ActiveRecord::Base
       end
       match_wins = playermatches.count {|match| match.player1_score > match.player2_score}
       match_losses = playermatches.count {|match| match.player1_score < match.player2_score}
-      match_ties = playermatches.count {|match| match.player1_score == match.player2_score}
+      match_ties = playermatches.count {|match| (match.player1_score == match.player2_score) && (match.player1_score > 0 || match.ties > 0)}
       match_byes = playermatches.count {|match| match.bye}
       game_wins = playermatches.sum {|match| match.player1_score}
       game_losses = playermatches.sum {|match| match.player2_score}
       match_points = points_win*match_wins + points_tie*match_ties + points_bye* match_byes
       total_matches = match_wins + match_losses + match_ties
       pts_per_match = total_matches == 0 ? 0 : (points_win*match_wins + points_tie*match_ties) / (1.0 * points_win * total_matches)
+      puts "******!!!!!!!*******!!!!! player: #{player.inspect}"
       standing = {player_id: player.id, name: player.name, wins: match_wins, losses: match_losses, ties: match_ties, total_matches: total_matches, points: match_points, pts_per_match: pts_per_match, game_wins: game_wins, game_losses: game_losses, player: player}
       standings << standing
     end
@@ -199,13 +209,17 @@ class Tourney < ActiveRecord::Base
     end
     max_round = Match.where(tourney_id: id).maximum(:round)
     max_round = 0 if max_round.nil?
-    current_round_match_player_ids = TourneyService.get_unique_complete_player_ids(id, max_round)
-    entrants_unmatched = []
-    players.each do |entrant|
-      if !current_round_match_player_ids.include? entrant.id
-        entrants_unmatched << entrant
+    current_round_match_player_ids = TourneyService.get_unique_complete_player_ids(id, max_round, false)
+    puts "*****!!!!!!!*******!!!!!!! current_round_match_player_ids: #{current_round_match_player_ids.inspect}"
+    players_unmatched = []
+    puts "*****!!!!!!!*******!!!!!!! players: #{players.inspect}"
+    puts "*****!!!!!!!*******!!!!!!! entrants: #{entrants.inspect}"
+    players.each do |player|
+      if !current_round_match_player_ids.include? player.id
+        players_unmatched << player
       end
     end
+    puts "*****!!!!!!!*******!!!!!!! players_unmatched: #{players_unmatched.inspect}"
 
     # @entrants = players()
     # one round at a time, massage matches into the format for the view
@@ -217,21 +231,38 @@ class Tourney < ActiveRecord::Base
     match_records.each do |match|
       match_with_names = match.dup
       match_with_names.id = match.id
-      match_with_names.player1_name = Player.find_by(id: match.player1_id).name
-      match_with_names.player2_name = Player.find_by(id: match.player2_id).name
+      if Player.find_by(id: match.player1_id)
+        match_with_names.player1_name = Player.find_by(id: match.player1_id).name
+      end
+      puts "!!!!!!*********!!!!!!! in brackets, #{match.inspect}, #{match.player1_id}, #{Player.find_by(id: match.player1_id)}"
+      if Player.find_by(id: match.player2_id)
+        match_with_names.player2_name = Player.find_by(id: match.player2_id).name
+      end
       matches << match_with_names if match.round.present? && match.round <= max_round
     end
     match_records = Match.where(tourney_id: id, round: max_round)
     if max_round == 0
-      pairs, bye_player = swiss_pairings_initial entrants_unmatched
+      pairs, bye_player = swiss_pairings_initial players_unmatched
     else
-      standings_unmatched = generate_standings entrants_unmatched
-      good_enough_penalty = max_round * points_win * entrants_unmatched.count / 2
-      pairs, bye_player = generate_optimal_pairing standings_unmatched, good_enough_penalty
+      standings = generate_standings 
+      puts "*********!!!!!****** in tourney.brackets, players_unmatched: #{players_unmatched.inspect}"
+      standings_unmatched = standings.select {|standing| 
+        players_unmatched.include? standing[:player]
+      }
+      puts "*********!!!!!****** in tourney.brackets, standings_unmatched: #{standings_unmatched.inspect}"
+      good_enough_penalty = max_round * points_win * players_unmatched.count / 2
+      pairs, bye_player = generate_optimal_pairing_exhaustive standings_unmatched, good_enough_penalty
+      puts "*********!!!!!****** in tourney.brackets, bye_player: #{bye_player.inspect}"
     end
-    player1, player2 = pairs.transpose
-    scores1, scores2, ties = [0] * pairs.length, [0] * pairs.length, [0] * pairs.length
-    round = [max_round] * pairs.length
+    if pairs.present?
+      player1, player2 = pairs.transpose
+      scores1, scores2, ties = [0] * pairs.length, [0] * pairs.length, [0] * pairs.length
+      round = [max_round] * pairs.length
+    else
+      player1, player2 = nil, nil
+      scores1, scores2, ties = 0, 0, 0
+      round = max_round
+    end
     if player1.present? && player2.present?
       match_data = player1.zip(player2, scores1, scores2, ties, round)
       match_data.each do |data|
@@ -242,17 +273,19 @@ class Tourney < ActiveRecord::Base
         match_with_names.id = match.id
         puts "data[0]: #{data[0].inspect}"
         puts "data[1]: #{data[1].inspect}"
-        match_with_names.player1_name = data[0].name
-        match_with_names.player2_name = data[1].name
+        match_with_names.player1_name = data[0][:name]
+        match_with_names.player2_name = data[1][:name]
         matches << match_with_names
       end
     end
     if bye_player
-      parms = {tourney_id: id, player1_id: bye_player.id, player2_id: bye_player.id, player1_score: 0, player2_score: 0, ties: 0, round: 0, bye: true}
+      puts "*********!!!!!!!!!****** brackets, bye_player: #{bye_player.inspect}, #{bye_player[:player_id]}"
+      parms = {tourney_id: id, player1_id: bye_player[:player_id], player2_id: bye_player[:player_id], player1_score: 0, player2_score: 0, ties: 0, round: max_round, bye: true}
       match = Match.new parms
       match.save!
       match_with_names = match.dup
       match_with_names.id = match.id
+      puts "*******!!!!!!!! brackets, bye_player: #{bye_player.inspect}"
       match_with_names.player1_name = match_with_names.player2_name = Player.find_by(id: bye_player.id).name
       matches << match_with_names
     end
