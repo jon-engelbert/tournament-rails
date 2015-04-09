@@ -11,20 +11,20 @@ class TourneyService
     end
     tourney.players.each do |entrant|
       is_incomplete ||=  !(match_player_ids.include? entrant.id)
-      # puts "*************** is_incomplete 1 #{is_incomplete}"
+      puts "*************** is_incomplete 1 #{is_incomplete}"
     end
     entrants_unmatched = []
     tourney.players.each do |entrant|
       if !match_player_ids.include? entrant.id
         entrants_unmatched << entrant
-        # puts "entrants_unmatched: #{entrants_unmatched}"
+        puts "entrants_unmatched: #{entrants_unmatched}"
       end
     end
     is_incomplete = !entrants_unmatched.empty?
-      # puts "*************** is_incomplete 2 #{is_incomplete}"
+      puts "*************** is_incomplete 2 #{is_incomplete}"
     matches.each do |match|
       is_incomplete ||= !match.bye && match.player1_score == 0 && match.player2_score == 0 && match.ties == 0
-      # puts "*************** is_incomplete 3 #{is_incomplete}"
+      puts "*************** is_incomplete 3 #{is_incomplete}"
     end
     !is_incomplete
   end
@@ -80,7 +80,7 @@ class TourneyService
     end
     if bye_player
       puts "********!!!!!!!!********* in generate_brackets_next, about to add bye_player, #{bye_player.inspect}"
-      parms = {tourney_id: tourney_id, player1_id: bye_player[:player_id], player2_id: bye_player[:player_id], player1_score: 0, player2_score: 0, ties: 0, round: max_round+1, bye: true}
+      parms = {tourney_id: tourney_id, player1_id: bye_player.id, player2_id: bye_player.id, player1_score: 0, player2_score: 0, ties: 0, round: max_round+1, bye: true}
       match = Match.new parms
       puts "********!!!!!!!!********* in generate_brackets_next, about to add bye_player match, #{match.inspect}"
       match.save
@@ -105,6 +105,7 @@ class TourneyService
     end
     if include_byes
       bye_match_record = Match.where(tourney: tourney_id, round: round, bye: true)
+      puts "******!!!!!******** in get_unique_complete_player_ids, bye_match_record: #{bye_match_record}, #{bye_match_record[0].inspect}"
       match_player_ids << bye_match_record[0].player1_id if bye_match_record.present?
     end
     match_player_ids

@@ -175,7 +175,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-      		good_enough_penalty = match_set.count / 3
+      		good_enough_penalty = 2 * 0.1 # match_set.count / 3
 			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(8)
@@ -186,7 +186,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-      		good_enough_penalty = match_set.count / 3
+      		good_enough_penalty = 3 * 0.1 # match_set.count / 3
 			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(12)
@@ -196,7 +196,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-      		good_enough_penalty =  match_set.count / 3
+      		good_enough_penalty = 4 * 0.1 #  match_set.count / 3
 			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(16)
@@ -206,7 +206,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-      		good_enough_penalty =  match_set.count / 3
+      		good_enough_penalty = 5 * 0.1 #  match_set.count / 3
 			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(20)
@@ -216,7 +216,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-      		good_enough_penalty =  match_set.count / 3
+      		good_enough_penalty = 6 * 0.1 #  match_set.count / 3
 			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(24)
@@ -226,7 +226,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-      		good_enough_penalty = match_set.count / 2
+      		good_enough_penalty = 7 * 0.1 # match_set.count / 2
 			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(28)
@@ -236,7 +236,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player1_score, 1)
 				match.update_attribute(:player2_score, 1)
 			end
-      		good_enough_penalty = match_set.count / 2
+      		good_enough_penalty = 8 * 0.1 # match_set.count / 2
 			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(32)
