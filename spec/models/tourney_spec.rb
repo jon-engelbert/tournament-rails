@@ -16,13 +16,6 @@ describe Tourney, type: :model do
 			subject.user_id = user.id
 		end
 	end
-	context ' initial pairing' do
-		let(:user) {FactoryGirl.build_stubbed(:user, email: 'al@jmail.com')}
-		subject {FactoryGirl.build_stubbed(:tourney, user_id: user.id)}
-		it 'doesnt crash' do
-			is_expected.to respond_to :swiss_pairings_initial 
-		end
-	end
 	describe 'initial pairings implementation' do
 		subject (:tour) {FactoryGirl.build_stubbed(:tourney)}
 		it "doesn't crash" do
@@ -47,7 +40,8 @@ describe Tourney, type: :model do
 				i += 1
 			end
 			# matches = FactoryGirl.build_stubbed_list(:match, 4)
-			pairs, bye_player = tour.swiss_pairings_initial tour.players
+			bracket_mgr = BracketManager.new tour
+			pairs, bye_player = bracket_mgr.swiss_pairings_initial tour.players
 			expect(pairs.count).to eq(4)
 			expect(bye_player).not_to be_nil
 		end
@@ -61,7 +55,8 @@ describe Tourney, type: :model do
 				i += 1
 			end
 			# matches = FactoryGirl.build_stubbed_list(:match, 4)
-			pairs, bye_player = tour.swiss_pairings_initial subject.players
+			bracket_mgr = BracketManager.new tour
+			pairs, bye_player = bracket_mgr.swiss_pairings_initial subject.players
 			expect(pairs.count).to eq(4)
 			expect(bye_player).to be_nil
 		end
@@ -130,8 +125,8 @@ describe Tourney, type: :model do
 				if player_stand_prev
 					puts "player_standing_prev: #{player_stand_prev}"
 					puts "player_standing: #{player_standing}"
-					expect(player_standing[:pts_per_match] <= player_stand_prev[:pts_per_match]).to be_truthy
-					expect(player_standing[:pts_per_match] < player_stand_prev[:pts_per_match] || player_standing[:game_wins] <= player_stand_prev[:game_wins]).to be_truthy
+					expect(player_standing[:match_points] <= player_stand_prev[:match_points]).to be_truthy
+					expect(player_standing[:match_points] < player_stand_prev[:match_points] || player_standing[:opponents_match_pct] <= player_stand_prev[:opponents_match_pct]).to be_truthy
 				end
 				player_stand_prev = player_standing
 			end
@@ -165,6 +160,8 @@ describe Tourney, type: :model do
 				tour.players << player
 				i += 1
 			end
+			tourney = tour
+			bracket_manager = BracketManager.new tourney
 			match_standings, bye_player = tour.brackets
 			matches = Match.all
 			expect(matches.count).to eq(4)
@@ -176,7 +173,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player2_score, 1)
 			end
       		good_enough_penalty = 2 * 0.1 # match_set.count / 3
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			match_standings, bye_player = bracket_manager.generate_brackets_next  good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(8)
 			match_set = Match.matchup_sets(matches)
@@ -187,7 +184,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player2_score, 1)
 			end
       		good_enough_penalty = 3 * 0.1 # match_set.count / 3
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			match_standings, bye_player = bracket_manager.generate_brackets_next  good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(12)
 			match_set = Match.matchup_sets(matches)
@@ -197,7 +194,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player2_score, 1)
 			end
       		good_enough_penalty = 4 * 0.1 #  match_set.count / 3
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			match_standings, bye_player = bracket_manager.generate_brackets_next  good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(16)
 			match_set = Match.matchup_sets(matches)
@@ -207,7 +204,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player2_score, 1)
 			end
       		good_enough_penalty = 5 * 0.1 #  match_set.count / 3
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			match_standings, bye_player = bracket_manager.generate_brackets_next  good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(20)
 			match_set = Match.matchup_sets(matches)
@@ -217,7 +214,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player2_score, 1)
 			end
       		good_enough_penalty = 6 * 0.1 #  match_set.count / 3
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			match_standings, bye_player = bracket_manager.generate_brackets_next  good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(24)
 			match_set = Match.matchup_sets(matches)
@@ -227,7 +224,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player2_score, 1)
 			end
       		good_enough_penalty = 7 * 0.1 # match_set.count / 2
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			match_standings, bye_player = bracket_manager.generate_brackets_next  good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(28)
 			match_set = Match.matchup_sets(matches)
@@ -237,7 +234,7 @@ describe Tourney, type: :model do
 				match.update_attribute(:player2_score, 1)
 			end
       		good_enough_penalty = 8 * 0.1 # match_set.count / 2
-			match_standings, bye_player = TourneyService.generate_brackets_next tour.id, good_enough_penalty
+			match_standings, bye_player = bracket_manager.generate_brackets_next  good_enough_penalty
 			matches = Match.all
 			expect(matches.count).to eq(32)
 			match_set = Match.matchup_sets(matches)
