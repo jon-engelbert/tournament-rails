@@ -34,8 +34,8 @@ $(document).on ('ready page:load', function() {
       $("#entrant_email_list").append('<li>' + email + '</li>');
       console.log("player_name_array.length" + player_name_array.length);
       console.log("player_email_array.length" + player_email_array.length);
-      player_email_array.splice(position,1)
-      player_name_array.splice(position,1)
+      player_email_array.splice(position,1);
+      player_name_array.splice(position,1);
       console.log("player_name_array.length" + player_name_array.length);
       console.log("player_email_array.length" + player_email_array.length);
       $('#players').data('name', player_name_array);
@@ -95,14 +95,14 @@ $(document).on ('ready page:load', function() {
       // find the corresponding email, remove it from the list.
       var email = $('#entrants').data('email')[position];
       var players = $('#players').data('list');
-      player_email_array.push(email)
-      player_name_array.push(name)
+      player_email_array.push(email);
+      player_name_array.push(name);
       $('#players').data('name', player_name_array);
       $('#players').data('email', player_email_array);
       $("#autocomplete-1").autocomplete( "option", "source", player_name_array);
  
-      entrantNames.splice(position,1)
-      entrantEmails.splice(position,1)
+      entrantNames.splice(position,1);
+      entrantEmails.splice(position,1);
       $('#entrants').data('name', entrantNames);
       $('#entrants').data('email', entrantEmails);
       $('#tourney_entrant_names').val(entrantNames);
@@ -134,7 +134,7 @@ $(document).on ('ready page:load', function() {
     for(i = 0; i < tbFrom.options.length; i++) 
     {
       arrLU[tbFrom.options[i].text] = tbFrom.options[i].value;
-      if (tbFrom.options[i].selected && tbFrom.options[i].value != "") 
+      if (tbFrom.options[i].selected && tbFrom.options[i].value !== "") 
       {
        arrTo[tLength] = tbFrom.options[i].text;
        tLength++;
@@ -160,10 +160,10 @@ $(document).on ('ready page:load', function() {
 
     for(ii = 0; ii < arrTo.length; ii++) 
     {
-      var no = new Option();
-      no.value = arrLU[arrTo[ii]];
-      no.text = arrTo[ii];
-      tbTo[ii] = no;
+      var no2 = new Option();
+      no2.value = arrLU[arrTo[ii]];
+      no2.text = arrTo[ii];
+      tbTo[ii] = no2;
     }
   });
 
@@ -186,7 +186,7 @@ $(document).on ('ready page:load', function() {
     for(i = 0; i < tbFrom.options.length; i++) 
     {
       arrLU[tbFrom.options[i].text] = tbFrom.options[i].value;
-      if (tbFrom.options[i].selected && tbFrom.options[i].value != "") 
+      if (tbFrom.options[i].selected && tbFrom.options[i].value !== "") 
       {
        arrTo[tLength] = tbFrom.options[i].text;
        tLength++;
@@ -212,16 +212,16 @@ $(document).on ('ready page:load', function() {
 
     for(ii = 0; ii < arrTo.length; ii++) 
     {
-      var no = new Option();
-      no.value = arrLU[arrTo[ii]];
-      no.text = arrTo[ii];
-      tbTo[ii] = no;
+      var no3 = new Option();
+      no3.value = arrLU[arrTo[ii]];
+      no3.text = arrTo[ii];
+      tbTo[ii] = no3;
     }
   });
   $(".select_before_submit").click(function(e)
   {
     $('#tourney_entrant_names option').each(function () {
-            $(this).attr('selected', true);
-        });
-  })
+      $(this).attr('selected', true);
+    });
+  });
 });

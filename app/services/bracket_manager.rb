@@ -9,7 +9,6 @@ class BracketManager
 		mod = players_in.length % 2
 		use_bye = ( mod!= 0)
 		puts "players_in.length, mod, use_bye: #{players_in.length}, #{mod}, #{use_bye}"
-		player_bye_id = nil
 		if use_bye
 		  bye_player = players_in.sample
 		  puts "bye_player: #{bye_player.inspect}"
@@ -128,7 +127,6 @@ class BracketManager
 		end
 
 		if player_standings.count > 6 && !is_exhaustive
-		  samples = []
 		  1000.times do
 		    player_standings_temp =  player_standings.shuffle
 		    player_pairs, bye_player, bye_player_hash = generate_pairs_from_standings player_standings_temp
@@ -204,7 +202,7 @@ class BracketManager
 		if max_round == 0
 		  pairs, bye_player = swiss_pairings_initial players_unmatched
 		else
-		  standings = generate_standings 
+		  standings = tourney.generate_standings 
 		  puts "*********!!!!!****** in tourney.brackets, players_unmatched: #{players_unmatched.inspect}"
 		  standings_unmatched = standings.select {|standing| 
 		    players_unmatched.include? standing[:player]
@@ -255,7 +253,6 @@ class BracketManager
 
   # GET /tourneys/1/brackets_initial
   def self.generate_brackets_initial
-    players = Player.all()
     match_player_ids = Set.new
     match_records = Match.where(tourney: tourney.id).where("round <= 0")
     match_records.each do |match|
@@ -353,11 +350,11 @@ class BracketManager
       matches << match
     end
 
-    match_records.each do |match|
-      puts "*******!!!!!!!******** in generate_brackets_next, #{match.inspect}"
-      match.player1_name = Player.find_by(id: match.player1_id).name
-      match.player2_name = Player.find_by(id: match.player2_id).name
-      matches << match
+    match_records.each do |match_1|
+      puts "*******!!!!!!!******** in generate_brackets_next, #{match_1.inspect}"
+      match_1.player1_name = Player.find_by(id: match_1.player1_id).name
+      match_1.player2_name = Player.find_by(id: match_1.player2_id).name
+      matches << match_1
     end
     return matches, bye_player
   end

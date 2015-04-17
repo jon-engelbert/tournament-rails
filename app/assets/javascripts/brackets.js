@@ -41,17 +41,18 @@ $(document).on ('ready page:load', function() {
 		// alert("id:"+this.id);
 		// $('#match_params').show();
 		// $('#score1').val
-	})
+	});
   $('.cancelEdit').click(function(e) {
     e.preventDefault();
           dialog.dialog( "close" );
-  })
+  });
   $('.closeEdit').click(function(e) {
           dialog.dialog( "close" );
-  })
+  });
   $('.submitScores').click(function(e) {
     submitScores(e);
-  })
+  });
+
   var dialog = $( "#Edit_scores" ).dialog({
       autoOpen: false,
       height: 325,
@@ -76,7 +77,9 @@ $(document).on ('ready page:load', function() {
     $.ajax({
       type: "POST",
       url: recordmatch_path,
-      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+      },
       data: JSON.stringify({ player1_wins: score1, player2_wins: score2, ties: ties, match_id: match_id, tourney_id: tourney_id, round: round}),
       dataType: 'json',
       contentType: 'application/json',
@@ -96,8 +99,7 @@ $(document).on ('ready page:load', function() {
         alert (data);
         return false;
       }
-    })
-
+    });
   }
   
 	$("#Edit_scores").on("ajax:success", function (e, data, status, xhr) {
@@ -106,11 +108,13 @@ $(document).on ('ready page:load', function() {
 		$("#score_" + match["match_id"]).val(match["player1_score"]+ " - " + match["player2_score"] + "  (" + match["ties"] + ")");
 		$("#AJAX_Results").append("#score_" + match["player1_name"]+ "_" + match["player2_name"]);
 		$("#Edit_scores").hide();
-	})
+	});
+
 	$("#Edit_scores").on("ajax:error", function(e, xhr, status, error) {
 		$("#AJAX_Results").append ("<p>ERROR</p>");
 		$("#Edit_scores").hide();
-	})
+	});
+
   var player1_name = '';
   var player2_name = '';
   var match1_id = 0;
@@ -126,7 +130,7 @@ $(document).on ('ready page:load', function() {
     drag: function( event, ui ) {
       player1_name = $(this).data('playername');  
       match1_id = $(this).data('matchid');  
-      round1 = $(this).data('round')
+      round1 = $(this).data('round');
       drag_id = this.id;
       drag_pos = $(this).position();
       console.log('player_name, match_id, path');
@@ -177,7 +181,9 @@ $(document).on ('ready page:load', function() {
       $.ajax({
         type: "POST",
         url: swapmatch_path,
-        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+        },
         data: JSON.stringify({ player1_swap: player1_name, player2_swap: player2_name, match1_id: match1_id, match2_id: match2_id }),
         dataType: 'json',
         contentType: 'application/json',
@@ -205,4 +211,4 @@ $(document).on ('ready page:load', function() {
       })
     }
   });
-})
+});

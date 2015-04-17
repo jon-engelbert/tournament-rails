@@ -57,7 +57,7 @@ class TourneysController < ApplicationController
     puts "******* entrant_names #{@entrant_names}"
     puts "******* entrant_emails #{@entrant_emails}"
     puts "******* players_remaining_names #{@players_remaining_names}"
- end
+  end
 
   # GET /tourneys/1/brackets_next
   def brackets_next

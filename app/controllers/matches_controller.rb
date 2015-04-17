@@ -54,7 +54,6 @@ class MatchesController < ApplicationController
       flash[:notice] = "Swap aborted"
       error = true
     end
-    round = params['round']
     tourney_id = params["tourney_swap"]
     if (params['match1_id'] == params['match2_id'])
       logger.error("swap within the same match is not allowed")
@@ -154,7 +153,7 @@ class MatchesController < ApplicationController
       puts "****************** in record match, new match , params: #{match_params}"
       match = Match.create(match_params)
       match.save
-   end
+    end
     respond_to do |format|
       match_hash = match.as_json
       match_hash['player1_name'] = player1name
