@@ -65,6 +65,24 @@ $(document).on ('ready page:load', function() {
       }
     });
 
+  function updateScores (data) {
+    dialog.dialog( "close" );
+    console.log(data);
+    match = data;
+    $("#score_" + match["id"]).text(match["player1_score"]+ " - " + match["player2_score"] + "  (" + match["ties"] + ")  -- click to edit");
+    $("#score_" + match["id"]).data('player1wins', match["player1_score"]);
+    $("#score_" + match["id"]).data('player2wins', match["player2_score"]);
+    $("#score_" + match["id"]).data('ties', match["ties"]);
+    console.log("#score_" + match["id"]);
+    console.log(match["player1_score"]);
+  }
+
+  function failUpdateScores(data) {
+    dialog.dialog( "close" );
+    alert (data);
+    return false;
+  }
+
   function submitScores(e) {
     var match_id = $("#match_id").val();
     var score1 = $("#player1_wins").val();
@@ -74,7 +92,7 @@ $(document).on ('ready page:load', function() {
     var ties = $("#ties").val();
     // $("#score_" + match_id).text(score1 + " - " + score2 + "  (" + ties + ")");
     e.preventDefault();
-    $.ajax({
+    var promise = $.ajax({
       type: "POST",
       url: recordmatch_path,
       beforeSend: function(xhr) {
@@ -82,24 +100,10 @@ $(document).on ('ready page:load', function() {
       },
       data: JSON.stringify({ player1_wins: score1, player2_wins: score2, ties: ties, match_id: match_id, tourney_id: tourney_id, round: round}),
       dataType: 'json',
-      contentType: 'application/json',
-      success: function (data) {
-        dialog.dialog( "close" );
-        console.log(data);
-        match = data;
-        $("#score_" + match["id"]).text(match["player1_score"]+ " - " + match["player2_score"] + "  (" + match["ties"] + ")  -- click to edit");
-        $("#score_" + match["id"]).data('player1wins', match["player1_score"]);
-        $("#score_" + match["id"]).data('player2wins', match["player2_score"]);
-        $("#score_" + match["id"]).data('ties', match["ties"]);
-        console.log("#score_" + match["id"]);
-        console.log(match["player1_score"]);
-      },
-      error: function (data) {
-        dialog.dialog( "close" );
-        alert (data);
-        return false;
-      }
+      contentType: 'application/json'
     });
+    promise.done(updateScores);
+    promise.fail(failUpdateScores);
   }
   
 	$("#Edit_scores").on("ajax:success", function (e, data, status, xhr) {
@@ -144,16 +148,42 @@ $(document).on ('ready page:load', function() {
     // $(this).data("draggable")
     // on 2.x versions of jQuery use "ui-draggable"
     // $(this).data("ui-draggable")
-    $(this).data("uiDraggable").originalPosition = {
-        top : 0,
-        left : 0
-    };
-    // return boolean
-    return !event;
-    // that evaluate like this:
-    // return event !== false ? false : true;
-  }
+      $(this).data("uiDraggable").originalPosition = {
+          top : 0,
+          left : 0
+      };
+      // return boolean
+      return !event;
+      // that evaluate like this:
+      // return event !== false ? false : true;
+    }
   });
+
+  function dropPlayer (data) {
+// var d = JSON.parse(data);
+    if (data['success'] === false) {
+      return false;
+    }
+    var player1_name = data['player1_name'];
+    var player2_name = data['player2_name'];
+    console.log("success:" + JSON.stringify(data));
+    console.log("field_drag_id:" + drag_id);
+    console.log(player2_name);
+    console.log("field_drop_id:" + drop_id);
+    console.log(player1_name);
+    $("#" + drag_id ).text(player2_name);
+    $("#" + drag_id ).attr('playername', player2_name);
+    $("#" + drop_id ).text(player1_name);
+    $("#" + drop_id ).attr('playername', player1_name);
+    $("#" + drag_id ).css({ "position": "relative", "top": 0, "left": 0 });
+    return true;
+  }
+  function failDropPlayer (data) {
+    alert (data);
+    $("#" + drag_id ).css({ "position": "relative", "top": 0, "left": 0 });
+    return false;
+  }
+
   $( ".droppable" ).droppable({
     tolerance: "intersect",
     accept: ".draggable",
@@ -178,7 +208,7 @@ $(document).on ('ready page:load', function() {
       //     .addClass( "ui-state-highlight" )
       //     .find( "p" )
       //       .html( this.id );
-      $.ajax({
+      var promise = $.ajax({
         type: "POST",
         url: swapmatch_path,
         beforeSend: function(xhr) {
@@ -186,29 +216,10 @@ $(document).on ('ready page:load', function() {
         },
         data: JSON.stringify({ player1_swap: player1_name, player2_swap: player2_name, match1_id: match1_id, match2_id: match2_id }),
         dataType: 'json',
-        contentType: 'application/json',
-        success: function (data) {
-		// var d = JSON.parse(data);
-          if (data['success'] === false) {
-          	return false;
-          }
-          console.log("success:" + data);
-          console.log("field_drag_id:" + drag_id);
-          console.log(player2_name);
-          console.log("field_drop_id:" + drop_id);
-          console.log(player1_name);
-          $("#" + drag_id ).text(player2_name);
-          $("#" + drag_id ).attr('playername', player2_name);
-          $("#" + drop_id ).text(player1_name);
-          $("#" + drop_id ).attr('playername', player1_name);
-          $("#" + drag_id ).css({ "position": "relative", "top": 0, "left": 0 });
-        },
-        error: function (data) {
-          alert (data);
-          $("#" + drag_id ).css({ "position": "relative", "top": 0, "left": 0 });
-          return false;
-        }
-      })
+        contentType: 'application/json'
+      });
+      promise.done(dropPlayer);
+      promise.fail(failDropPlayer);
     }
   });
 });
