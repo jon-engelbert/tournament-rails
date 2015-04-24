@@ -12,7 +12,12 @@
   </thead>
 
   <tbody>
-    <%= render @users %>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.name %></td>
+        <td><%= user.email %></td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
 
