@@ -5,6 +5,7 @@
     width: 100%;
     overflow: hidden;
     height: 100%;
+    display: inline-block;
 }
 
 .middle-div {
@@ -15,6 +16,11 @@
     overflow: hidden;
 }​
 
+.middle-div2 {
+    float: left;
+    margin-left: 0px;
+}​
+
 .left-div {
     float: left;
     width: 120px;
@@ -22,12 +28,23 @@
     margin-left: 0px;
     overflow: hidden;
 }
+.left-div2 {
+    float: left;
+    width: 120px;
+    margin-left: 0px;
+}
 
 .right-div {
     float: left;
     width: 120px;
     padding: 0.5em; 
     overflow: hidden;
+}
+
+.right-div2 {
+    float: left;
+    width: 80px;
+    margin-left: 0px;
 }
 
 .side-by-side {

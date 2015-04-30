@@ -7,32 +7,32 @@
     <div id= "round_matches" class = "matchups">
     <% @matches.select {|match| match.round == round}.each do |match| %>
       <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "side-by-side ui-widget-content">
-        <section class="static-div">
+        <section class="static-div" >
         <% if logged_in_as_tourney_admin?(@tourney) && !match.bye %>
           <div id = "player1_<%=match.id%>" class = "left-div draggable droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% else %>
-          <div id = "player1_<%=match.id%>" class = "left-div " draggable="false" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
+          <div id = "player1_<%=match.id%>" class = "left-div2" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% end %>
             <%= match.player1_name %>
           </div>
+        <% if logged_in_as_tourney_admin?(@tourney) && !match.bye %>
           <div id = "mid_<%=match.id%>" class="middle-div">
-          <% if match.bye %>
-            bye
-          <% else %>
-            vs
-          <% end %>
-        </div>
+          vs
+          </div>          
+        <% elsif logged_in_as_tourney_admin?(@tourney) %>
+           bye        
+        <% elsif !match.bye%>
+          vs   
+        <% else %>
+          bye  
+        <% end %>
         <% if logged_in_as_tourney_admin?(@tourney) && !match.bye %>
           <div id = "player2_<%=match.id%>" class = "right-div draggable droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
-        <% else %>
-          <div id = "player2_<%=match.id%>" class = "right-div" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
-        <% end %>
-          <% if match.bye %>
-            --
-          <% else %>
-            <%= match.player2_name %> 
-          <% end %>
+            <%= match.player2_name %>
           </div>
+        <% elsif !match.bye %>
+          <%= match.player2_name %>
+        <% end %>
         </section>
         <section class = "scores">
         <% if not logged_in_as_tourney_admin?(@tourney) %>
@@ -50,7 +50,7 @@
           data-matchid="<%= match.id %>">
             <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>) -- click to edit
           </div>
-        <% else %>
+        <% elsif !match.bye %>
           <div id= "score_<%=match.id%>" draggable="false" class="editMatchButton" title="Edit Match Scores"
           data-player1name="<%= match.player1_name%>"
           data-player2name="<%= match.player2_name%>"
