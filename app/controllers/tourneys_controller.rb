@@ -64,10 +64,11 @@ class TourneysController < ApplicationController
     # in response to user clicking on "generate next round".
     # if current round is complete, then proceed.
     @tourney = Tourney.find(params[:id])
+    bracket_manager = BracketManager.new(@tourney)
     max_round = Match.where(tourney_id: params[:id]).maximum(:round)
     max_round = 0 if max_round.nil?
     good_enough_penalty = max_round * 0.1 # Match.count / 3
-    TourneyService.generate_brackets_next params[:id], good_enough_penalty
+    bracket_manager.generate_brackets_next good_enough_penalty
     @matches, @bye_player = @tourney.brackets
     @max_round = Match.where(tourney: params[:id]).maximum(:round)
     @max_round = 0 if @max_round.nil?
