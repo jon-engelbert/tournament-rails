@@ -83,6 +83,9 @@ class MatchesController < ApplicationController
     response_hash['success'] = !error
     response_hash['player1_name'] = player1name
     response_hash['player2_name'] = player2name
+    response_hash['round'] = params['round']
+    response_hash['match1_id'] = match1.id
+    response_hash['match2_id'] = match2.id
     # format.json { render :json => response_hash.to_json }
     render json: response_hash.to_json and return if request.xhr?
   end

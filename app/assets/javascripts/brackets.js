@@ -1,4 +1,89 @@
 $(document).on ('ready page:load', function() {
+  // loop through all the matches on page, create data structures to hold them.
+  // var Player = function (name, id) {
+  //   this.name = name;
+  //   this.id = id;
+  //   this.wins = 0;
+  // };
+
+  var Match = function() {
+    this.player1_name = '';
+    this.player2_name = '';
+    this.ties = 0;
+    this.player1_wins = 0;
+    this.player2_wins = 0;
+    this.bye = false;
+    this.SwapPlayer = function(player1_in, player2_in) {
+      if (this.player1_name === player1_in)
+        this.player1_name = player2_in;
+      else if (this.player1_name === player2_in)
+        this.player1_name = player1_in;
+      else if (this.player2_name === player1_in)
+        this.player2_name = player2_in;
+      else if (this.player2_name === player2_in)
+        this.player2_name = player1_in;
+      else
+        console.log("Error in Match.SwapPlayer");
+    };
+  };
+
+  var Round = function() {
+    this.matches = [];
+    number = -1;
+    this.GetMatchByID = function(id) {
+      var i = 0;
+      while (i < this.matches.length) {
+        var match = this.matches[i];
+        if (Number(match.id) === id) 
+          return match;
+        i += 1;
+      }
+      return null;
+    };
+    this.ReplaceMatch = function(match_in) {
+      var i = 0;
+      while (i < this.matches.length) {
+        var match = this.matches[i];
+        if (Number(match.id) === match_in.id) 
+          this.matches[i] = match_in;
+        i += 1;
+      }
+    };
+  };
+
+
+  var rounds = [];
+  var round = null;
+  var round_els = [];
+  if (document.querySelectorAll)
+      round_els = document.querySelectorAll(".round");
+  for (var i=0, max=round_els.length; i < max; i++) {
+    var round_el = round_els[i];
+    round = new Round();
+    round.number = i;
+    rounds[i] = round;
+    var matchup_els = round_el.getElementsByClassName('matchup');
+    for (var j=0, maxj=matchup_els.length; j < maxj; j++) {
+      var matchup_el = matchup_els[j];
+      var match = new Match;
+      round.matches[round.matches.length] = match;
+      var matchscore_el = matchup_el.getElementsByClassName('match-score');
+
+      match.ties = matchscore_el[0].dataset.ties;
+      match.id = matchscore_el[0].dataset.matchid;
+      var player_els = matchup_el.getElementsByClassName('player');
+      if (player_els.length> 0) {
+        var player_el1 = player_els[0];
+        match.player1_name = matchscore_el[0].dataset.player1name;
+        match.player1_wins = matchscore_el[0].dataset.player1wins;
+      }
+      if (player_els.length> 1) {
+        var player_el2 = player_els[1];
+        match.player2_name = matchscore_el[0].dataset.player2name;
+        match.player2_wins = matchscore_el[0].dataset.player2wins;
+      }
+    }
+  }
   var swapmatch_path = $('#paths').data('swap');
   var recordmatch_path = $('#paths').data('record');
     
@@ -19,19 +104,27 @@ $(document).on ('ready page:load', function() {
   });
 	$('.editMatchButton').click(function(e) {
 		e.preventDefault();
+    var n_round = 0;
 		// $("#Edit_scores").show();
+    if ($(this).data('round') >= 0) 
+      n_round = $(this).data('round');
+    $('#round').val(n_round);
+    var round = rounds[n_round];
+    var match_id = $(this).data('matchid');
+    var match = round.GetMatchByID(match_id);
+    $('#player1_name').text(match.player1_name + " wins");
+    $('#player2_name').text(match.player2_name + " wins");
+    $('#player1_wins').val(match.player1_wins);
+    $('#player2_wins').val(match.player2_wins);
+    $('#ties').val(match.ties);
+
     $('#Edit_scores').show({positionTo: '#round_matches'});    
-		$('#player1_name').text($(this).data('player1name') + " wins");
-		$('#player2_name').text($(this).data('player2name') + " wins");
-		$('#player1_wins').val($(this).data('player1wins'));
-		$('#player2_wins').val($(this).data('player2wins'));
-    $('#ties').val($(this).data('ties'));
-    $('#match_id').val($(this).data('matchid'));
-		if ($(this).data('round') < 0) {
-			$('#round').val(0);
-		} else {
-			$('#round').val($(this).data('round'));
-		}
+		// $('#player1_name').text($(this).data('player1name') + " wins");
+		// $('#player2_name').text($(this).data('player2name') + " wins");
+		// $('#player1_wins').val($(this).data('player1wins'));
+		// $('#player2_wins').val($(this).data('player2wins'));
+  //   $('#ties').val($(this).data('ties'));
+  //   $('#match_id').val($(this).data('matchid'));
       dialog.dialog( "open" );
       iHeight = 370;
     if ($("#Edit_scores").parent().height() < iHeight) {
@@ -68,11 +161,11 @@ $(document).on ('ready page:load', function() {
   function updateScores (data) {
     dialog.dialog( "close" );
     console.log(data);
-    match = data;
-    $("#score_" + match["id"]).text(match["player1_score"]+ " - " + match["player2_score"] + "  (" + match["ties"] + ")  -- click to edit");
-    $("#score_" + match["id"]).data('player1wins', match["player1_score"]);
-    $("#score_" + match["id"]).data('player2wins', match["player2_score"]);
-    $("#score_" + match["id"]).data('ties', match["ties"]);
+    match_data = data;
+    $("#score_" + match_data["id"]).text(match["player1_score"]+ " - " + match_data["player2_score"] + "  (" + match_data["ties"] + ")  -- click to edit");
+    $("#score_" + match_data["id"]).data('player1wins', match_data["player1_score"]);
+    $("#score_" + match_data["id"]).data('player2wins', match_data["player2_score"]);
+    $("#score_" + match_data["id"]).data('ties', match_data["ties"]);
     console.log("#score_" + match["id"]);
     console.log(match["player1_score"]);
   }
@@ -107,7 +200,8 @@ $(document).on ('ready page:load', function() {
   }
   
 	$("#Edit_scores").on("ajax:success", function (e, data, status, xhr) {
-		var match = JSON.parse(xhr.responseText);
+		var match_temp = JSON.parse(xhr.responseText);
+    var match = GetMatchByID(match["match_id"]);
 		$("#AJAX_Results").append(xhr.responseText);
 		$("#score_" + match["match_id"]).val(match["player1_score"]+ " - " + match["player2_score"] + "  (" + match["ties"] + ")");
 		$("#AJAX_Results").append("#score_" + match["player1_name"]+ "_" + match["player2_name"]);
@@ -164,8 +258,18 @@ $(document).on ('ready page:load', function() {
     if (data['success'] === false) {
       return false;
     }
+    if (data['round'] > rounds.length)
+      return false;
+    var round = rounds[data['round']];
+    var match1 = round.GetMatchByID(data['match1_id']);
+    var match2 = round.GetMatchByID(data['match2_id']);
     var player1_name = data['player1_name'];
     var player2_name = data['player2_name'];
+    match1.SwapPlayer(player1_name, player2_name);
+    match2.SwapPlayer(player1_name, player2_name);
+    round.ReplaceMatch(match1);
+    round.ReplaceMatch(match2);
+
     console.log("success:" + JSON.stringify(data));
     console.log("field_drag_id:" + drag_id);
     console.log(player2_name);
@@ -214,7 +318,7 @@ $(document).on ('ready page:load', function() {
         beforeSend: function(xhr) {
           xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
         },
-        data: JSON.stringify({ player1_swap: player1_name, player2_swap: player2_name, match1_id: match1_id, match2_id: match2_id }),
+        data: JSON.stringify({ player1_swap: player1_name, player2_swap: player2_name, match1_id: match1_id, match2_id: match2_id, round: round1 }),
         dataType: 'json',
         contentType: 'application/json'
       });

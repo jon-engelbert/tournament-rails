@@ -102,7 +102,7 @@ class RankManager
       pts_per_match = total_matches == 0 ? 0 : (match_points) / (1.0 * tourney.points_win * total_matches)
       puts "******!!!!!!!*******!!!!! player: #{player.inspect}"
       puts "******!!!!!!!*******!!!!! game_pct: #{player_game_pct(player)}}"
-      standing = {player_id: player.id, name: player.name, wins: match_wins, losses: match_losses, ties: match_ties, total_matches: total_matches, pts_per_match: pts_per_match, match_points: match_points, opponents_match_pct: opponents_match_pct(player, 0.33), player_game_pct: player_game_pct(player), opponents_game_pct: opponents_game_pct(player, 0.33), player: player}
+      standing = {player_id: player.id, name: player.name, wins: match_wins, losses: match_losses, ties: match_ties, total_matches: total_matches, pts_per_match: pts_per_match, match_points: match_points, opponents_match_pct: opponents_match_pct(player, 0.33).round(2), player_game_pct: player_game_pct(player).round(2), opponents_game_pct: opponents_game_pct(player, 0.33).round(2), player: player}
       standings << standing
     end
     player_standings = standings.sort_by{|a| [a[:match_points], a[:opponents_match_pct], a[:player_game_pct], a[:opponents_game_pct]]}.reverse

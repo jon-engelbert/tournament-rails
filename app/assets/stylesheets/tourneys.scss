@@ -60,13 +60,37 @@
 
 .droppable { padding: 0.5em; float: left; margin: 0px; }
 
-.matchups {clear:both; min-width: 280;}
-
-
-.edit-match {clear:both;float: left;}
-.editMatchButton:hover {
- cursor:pointer;
+.round {
+    clear:both; 
+    min-width: 280;
+    width: 100%;
 }
+
+.matchup {}
+
+.player {}
+.player:hover {
+    cursor:pointer;
+}
+
+
+.edit-match {
+    clear:both;
+    float: left;
+}
+
+.vertical-divider {
+    clear:both;
+}
+
+.editMatchButton {
+    clear:both;
+    width:100%;
+}
+.editMatchButton:hover {
+    cursor:pointer;
+}
+
 .player-preview {clear:both;float: left;; min-width: 280;}
 .player-list {
     float: left;

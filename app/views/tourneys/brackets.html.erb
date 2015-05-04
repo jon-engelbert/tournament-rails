@@ -1,17 +1,18 @@
 <h1>Tourney Brackets</h1>
-<div class="player_names" id="player_area">
   <% round = 0 %>
   <% while round <= @max_round do%>
     <% i = 0 %>
-    <h2>Round <%=round%></h2>
-    <div id= "round_matches" class = "matchups">
+    <div class = "round"> 
+      <br>
+      <h2>Round <%=round%></h2>
+    </div>
+    <div id= "round_matches<%=i%>" class = "round">
     <% @matches.select {|match| match.round == round}.each do |match| %>
-      <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "side-by-side ui-widget-content">
-        <section class="static-div" >
-        <% if logged_in_as_tourney_admin?(@tourney) && !match.bye %>
-          <div id = "player1_<%=match.id%>" class = "left-div draggable droppable ui-widget-content" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
+      <div id= "match_<%=match.player1_name%>_<%=match.player2_name%>" data-match= "<%= i %>" class = "matchup side-by-side ui-widget-content static-div">
+        <% if logged_in_as_tourney_admin?(@tourney) %>
+          <div id = "player1_<%=match.id%>" class = "left-div draggable droppable ui-widget-content player" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% else %>
-          <div id = "player1_<%=match.id%>" class = "left-div2" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
+          <div id = "player1_<%=match.id%>" class = "left-div2 player" data-playername= "<%= match.player1_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
         <% end %>
             <%= match.player1_name %>
           </div>
@@ -27,53 +28,41 @@
           bye  
         <% end %>
         <% if logged_in_as_tourney_admin?(@tourney) && !match.bye %>
-          <div id = "player2_<%=match.id%>" class = "right-div draggable droppable ui-widget-content" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
+          <div id = "player2_<%=match.id%>" class = "right-div draggable droppable ui-widget-content player" data-playername= "<%= match.player2_name %>" data-matchid = "<%= match.id %>" data-round = "<%= match.round%>">
             <%= match.player2_name %>
           </div>
         <% elsif !match.bye %>
           <%= match.player2_name %>
         <% end %>
-        </section>
-        <section class = "scores">
         <% if not logged_in_as_tourney_admin?(@tourney) %>
           <div id= "score_<%=match.id%>" draggable="false" > 
             <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>)
           </div>
-        <% elsif match.player1_score + match.player2_score + match.ties > 0 %>
-          <div id= "score_<%=match.id%>" draggable="false" class="editMatchButton" title="Edit Match Scores"
-          data-player1name="<%= match.player1_name%>"
-          data-player2name="<%= match.player2_name%>"
-          data-player1wins="<%= match.player1_score%>"
-          data-player2wins="<%= match.player2_score%>"
-          data-ties="<%= match.ties%>"
-          data-round="<%= match.round %>"
-          data-matchid="<%= match.id %>">
-            <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>) -- click to edit
-          </div>
-        <% elsif !match.bye %>
-          <div id= "score_<%=match.id%>" draggable="false" class="editMatchButton" title="Edit Match Scores"
-          data-player1name="<%= match.player1_name%>"
-          data-player2name="<%= match.player2_name%>"
-          data-player1wins="<%= match.player1_score%>"
-          data-player2wins="<%= match.player2_score%>"
-          data-ties="<%= match.ties%>"
-          data-round="<%= match.round %>"
-          data-matchid="<%= match.id %>">
-            click to edit
+        <% else %>
+          <div id= "score_<%=match.id%>" draggable="false"  class="editMatchButton match-score" title="Edit Match Scores"
+            data-player1name="<%= match.player1_name%>"
+            data-player2name="<%= match.player2_name%>"
+            data-player1wins="<%= match.player1_score%>"
+            data-player2wins="<%= match.player2_score%>"
+            data-ties="<%= match.ties%>"
+            data-round="<%= match.round %>"
+            data-matchid="<%= match.id %>">
+            <% if match.player1_score + match.player2_score + match.ties > 0 %>
+              <%=match.player1_score%> - <%=match.player2_score%>  (<%=match.ties%>) -- click to edit
+            <% elsif !match.bye %>
+              click to edit
+            <% end %>
           </div>
         <% end %>
-        </section>
       </div>
       <% i += 1 %>
     <% end %>
     </div>
-    <div class="matchups"> </div>
     <% round += 1 %>
   <% end %>
-</div>
 
-<div class = "matchups"> </div>
-<div id="nextRoundButton">
+<div id="nextRoundButton" class="vertical-divider">
+  <br>
   <a href=<%=brackets_next_tourney_path%> >Generate Next Round</a>
 </div>
 
