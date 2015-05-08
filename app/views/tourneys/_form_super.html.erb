@@ -55,7 +55,7 @@
         <select multiple size="10" name="Players" id="Players" style="width:150">
         <% if @players_remaining.present? %>
           <% @players_remaining.each do |player| %>
-            <option value=<%= player.name %>><%= player.name %></option>
+            <option value="<%= player.name %>"><%= player.name %></option>
           <% end %>
         <% end %>
         </select>
