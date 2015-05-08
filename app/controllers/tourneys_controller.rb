@@ -104,7 +104,7 @@ class TourneysController < ApplicationController
 
     if @tourney.save
       names = tourney_params[:entrant_names]
-      puts "***************** In Create, names: " + names
+      puts "***************** In Create, names: " + names.inspect
       names.each do |name|
         puts "In Create, name: " + name
         entrant  = Player.find_by name: name
