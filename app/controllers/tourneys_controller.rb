@@ -134,6 +134,7 @@ class TourneysController < ApplicationController
   # PATCH/PUT /tourneys/1
   # PATCH/PUT /tourneys/1.json
   def update
+    @tourney = Tourney.find(params[:id])
     respond_to do |format|
       puts "***************** in update, params: #{params.inspect}"
       puts "***************** in update, tourney_params: #{tourney_params.inspect}"
