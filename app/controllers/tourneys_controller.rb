@@ -147,9 +147,10 @@ class TourneysController < ApplicationController
         puts names
         #add un-found entrants
         names.each do |name|
+          puts "*********** in update, player name: " + name
           entrant  = Player.find_by name: name
           if entrant.present?
-            puts "*********** entrant.present #{name}"
+            puts "*********** entrant.present:  #{entrant.inspect}"
             if !@tourney.players.include? entrant
               @tourney.players << entrant
             end
