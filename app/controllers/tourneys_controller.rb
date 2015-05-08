@@ -101,6 +101,7 @@ class TourneysController < ApplicationController
   def create
     @tourney = Tourney.new(tourney_params)
     @tourney.user_id = current_user.id
+    puts "***************** In tourneys_controller.create, about to tourney.save: "
 
     if @tourney.save
       names = tourney_params[:entrant_names]
@@ -134,9 +135,9 @@ class TourneysController < ApplicationController
   # PATCH/PUT /tourneys/1.json
   def update
     respond_to do |format|
-      puts "params: #{params.inspect}"
-      puts "***************** tourney_params: #{tourney_params.inspect}"
-      puts "***************** @tourney.players #{@tourney.players}"
+      puts "***************** in update, params: #{params.inspect}"
+      puts "***************** in update, tourney_params: #{tourney_params.inspect}"
+      puts "***************** in update, @tourney.players #{@tourney.players.inspect}"
       if @tourney.update(tourney_params)
         #store entrants
         puts "*************** entrant_names: #{tourney_params[:entrant_names]}"
