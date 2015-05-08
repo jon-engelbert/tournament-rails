@@ -104,8 +104,9 @@ class TourneysController < ApplicationController
 
     if @tourney.save
       names = tourney_params[:entrant_names]
-      puts names
+      puts "***************** In Create, names: " + names
       names.each do |name|
+        puts "In Create, name: " + name
         entrant  = Player.find_by name: name
         if entrant.present?
           begin
@@ -122,6 +123,7 @@ class TourneysController < ApplicationController
         #   @tourney.players << entrant
         end
       end
+      puts "***************** Tourney was successfully created"
       redirect_to @tourney, notice: 'Tourney was successfully created.'
     else
       render :new
