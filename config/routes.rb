@@ -7,6 +7,16 @@ Rails.application.routes.draw do
   get    'signup'  => 'users#new'
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'
+  post   'connect_google'   => 'sessions#google_connect'
+  get 'login_google' => 'sessions#login_oauth'
+  get 'login_oauth' => 'sessions#login_oauth'
+  get 'login_facebook' => 'sessions#login_oauth'
+  get '/auth/:provider/callback', to: 'sessions#create_oauth'
+  get '/auth/failure', to: 'sessions#auth_failure'
+  # get    'login_google'   => 'sessions#login_google'
+  # post   'login_google'   => 'sessions#create_google'
+  # get    'login_facebook'   => 'sessions#login_facebook'
+  # post   'login_facebook'   => 'sessions#create_facebook'
   delete 'logout'  => 'sessions#destroy'
 
   resources :matches do

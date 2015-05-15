@@ -6,10 +6,10 @@ class User < ActiveRecord::Base
   before_create :create_activation_digest
   validates :name,  presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\-.]+\.[a-z]+\z/i
-  validates :email, presence: true, length: { maximum: 255 },
+  validates :email, length: { maximum: 255 },
     format: { with: VALID_EMAIL_REGEX }, uniqueness: { case_sensitive: false }
   has_secure_password
-  validates :password, length: { minimum: 6 }, allow_blank: true
+  validates :password, length: { minimum: 6 }
 
   # Returns the hash digest of the given string.
   def User.digest(string)
@@ -66,6 +66,25 @@ class User < ActiveRecord::Base
   # Returns true if a password reset has expired.
   def password_reset_expired?
     reset_sent_at < 2.hours.ago
+  end
+
+  def self.from_omniauth(auth)
+    find_by_provider_and_uid(auth["provider"], auth["uid"]) || create_with_omniauth(auth)
+  end
+
+  def self.create_with_omniauth(auth)
+    puts "****!!!!!! in create_with_omniauth"
+    user = User.new
+    user.provider = auth["provider"]
+    user.uid = auth["uid"]
+    user.name = auth["info"]["name"]
+    puts "****!!!!!! user1: #{user.inspect}"
+    user.email = 'doh@not.com'
+    user.password = "not_valid"
+    puts "****!!!!!! user2: #{user.inspect}"
+    user.save
+    puts "****!!!!!! user3: #{user.inspect}"
+    user
   end
 
   private

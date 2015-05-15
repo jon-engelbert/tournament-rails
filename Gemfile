@@ -28,6 +28,13 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'bcrypt', '~> 3.1.7'
 gem 'faker',                '~> 1.4.2'
 
+gem 'omniauth', '~> 1.2.2'
+gem "omniauth-google-oauth2"
+gem 'omniauth-linkedin-oauth2'
+gem 'omniauth-twitter'
+gem 'omniauth-facebook'
+gem 'google-api-client', '>= 0.8'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
