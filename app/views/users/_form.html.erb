@@ -18,8 +18,14 @@
         <%= f.label :password_confirmation, "Confirmation" %>
         <%= f.password_field :password_confirmation %>
       </div>
+      <div class="field">
+        <% if @is_admin %>
+          <%= f.label :admin %>
+          <%= f.check_box :admin %>
+        <% end %>
+      </div>
       <div class="actions">
-        <%= f.submit "Create my account", class: "btn btn-primary" %>
+        <%= f.submit "Update my account", class: "btn btn-primary" %>
       </div>
     <% end %>
   </div>

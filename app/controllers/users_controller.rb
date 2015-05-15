@@ -8,6 +8,7 @@ class UsersController < ApplicationController
   # GET /users.json
   def index
     @users = User.all
+    @curr_user = current_user
   end
 
   # GET /users/1
@@ -18,17 +19,21 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
+    @is_admin = current_user.admin?
+    puts "****** @is_admin: #{@is_admin}"
     @user = User.new
   end
 
   # GET /users/1/edit
   def edit
-    @user = User.find(params[:id])
+    @is_admin = current_user.admin?
+    puts "****** @is_admin: #{@is_admin}"
   end
 
   # POST /users
   # POST /users.json
   def create
+    user_params.admin = false if !current_user.admin?
     @user = User.new(user_params)
 
     if @user.save
@@ -44,6 +49,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1.json
   def update
     respond_to do |format|
+      user_params.admin = current_user.admin if !current_user.admin?
       if @user.update(user_params)
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { render :show, status: :ok, location: @user }
@@ -72,7 +78,7 @@ class UsersController < ApplicationController
     #
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation)
+      params.require(:user).permit(:name, :email, :password, :password_confirmation, :admin)
     end
 
     # Before filters
@@ -89,7 +95,7 @@ class UsersController < ApplicationController
     # Confirms the correct user.
     def correct_user
       @user = User.find(params[:id])
-      redirect_to(root_url) unless current_user?(@user)
+      redirect_to(root_url) unless current_user?(@user) || current_user.admin?
     end
 
     # Confirms the admin user.

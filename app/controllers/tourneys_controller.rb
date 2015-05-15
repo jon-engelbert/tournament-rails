@@ -144,7 +144,6 @@ class TourneysController < ApplicationController
         puts "*************** entrant_names: #{tourney_params[:entrant_names]}"
         # emails = tourney_params[:entrant_emails].split(",")
         names = tourney_params[:entrant_names]
-        puts names
         #add un-found entrants
         names.each do |name|
           puts "*********** in update, player name: " + name

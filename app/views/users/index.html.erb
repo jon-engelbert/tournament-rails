@@ -16,6 +16,8 @@
       <tr>
         <td><%= user.name %></td>
         <td><%= user.email %></td>
+        <td><%= link_to 'Edit', edit_user_path(user) if @curr_user && (@curr_user.admin?) %></td>
+        <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } if @curr_user &&  (@curr_user.admin?) %></td>
       </tr>
     <% end %>
   </tbody>
