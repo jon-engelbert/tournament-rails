@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150318151916) do
+ActiveRecord::Schema.define(version: 20150515195556) do
 
   create_table "entrants", force: :cascade do |t|
     t.integer  "player_id"
@@ -69,6 +69,8 @@ ActiveRecord::Schema.define(version: 20150318151916) do
     t.datetime "activated_at"
     t.string   "reset_digest"
     t.datetime "reset_sent_at"
+    t.string   "provider"
+    t.string   "uid"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
