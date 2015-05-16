@@ -12,7 +12,7 @@ gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', platforms: :ruby
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -28,12 +28,14 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'bcrypt', '~> 3.1.7'
 gem 'faker',                '~> 1.4.2'
 
-gem 'omniauth', '~> 1.2.2'
+gem 'devise'
+gem 'omniauth'
+gem 'omniauth-digitalocean'
 gem "omniauth-google-oauth2"
 gem 'omniauth-linkedin-oauth2'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
-gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
+# gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
 
 # Use Unicorn as the app server
 # gem 'unicorn'
