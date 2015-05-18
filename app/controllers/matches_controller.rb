@@ -1,6 +1,6 @@
 class MatchesController < ApplicationController
   before_action :set_match, only: [:show, :edit, :update, :destroy]
-  before_action :logged_in_user, only: [:new, :edit, :swap, :record, :update, :destroy, :create]
+  before_action :authenticate_user!, only: [:new, :edit, :swap, :record, :update, :destroy, :create]
 
   # GET /matches
   # GET /matches.json

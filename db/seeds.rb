@@ -9,9 +9,13 @@ User.create!(name:  "Admin User",
              email: "admin@admin.org",
              password:              "foobar",
              password_confirmation: "foobar",
-             admin: true,
-             activated: true,
-             activated_at: Time.zone.now)
+             admin: true)
+
+User.create!(name:  "eval",
+             email: "eval@eval.org",
+             password:              "password",
+             password_confirmation: "password",
+             admin: true)
 
 
 # 99.times do |n|

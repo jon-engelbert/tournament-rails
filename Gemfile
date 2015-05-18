@@ -31,7 +31,7 @@ gem 'faker',                '~> 1.4.2'
 gem 'devise'
 gem 'omniauth'
 gem 'omniauth-digitalocean'
-gem "omniauth-google-oauth2"
+gem 'omniauth-google-oauth2'
 gem 'omniauth-linkedin-oauth2'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'

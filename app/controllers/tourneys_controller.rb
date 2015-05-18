@@ -1,7 +1,7 @@
 #require 'tourney_service.rb'
 
 class TourneysController < ApplicationController
-  before_action :logged_in_user, only: [:new, :edit, :edit_super, :update, :destroy, :create]
+  before_action :authenticate_user!, only: [:new, :edit, :edit_super, :update, :destroy, :create]
   before_action :set_tourney, only: [:show, :edit, :update, :destroy]
 
   # GET /tourneys
