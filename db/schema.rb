@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20150516131745) do
     t.string   "name"
     t.string   "email"
     t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "updated_at", null: hrfalse
   end
 
   create_table "tourneys", force: :cascade do |t|

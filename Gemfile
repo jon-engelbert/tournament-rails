@@ -34,6 +34,8 @@ gem 'omniauth-google-oauth2'
 gem 'omniauth-linkedin-oauth2'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
+
+gem 'figaro'
 # gem 'heroku_secrets', github: 'alexpeattie/heroku_secrets'
 
 # Use Unicorn as the app server

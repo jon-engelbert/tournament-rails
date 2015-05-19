@@ -91,6 +91,8 @@ GEM
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.8)
+    figaro (1.1.1)
+      thor (~> 0.14)
     formatador (0.2.5)
     globalid (0.3.5)
       activesupport (>= 4.1.0)
@@ -319,6 +321,7 @@ DEPENDENCIES
   devise
   factory_girl_rails
   faker (~> 1.4.2)
+  figaro
   guard
   guard-minitest
   guard-rspec

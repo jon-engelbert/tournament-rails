@@ -23,3 +23,5 @@
 /config/local_env.yml
 /config/secrets.yml
 /config/settings.yml
+# Ignore application configuration
+/config/application.yml
