@@ -12,6 +12,26 @@
   <strong>Location:</strong>
   <%= @tourney.location %>
 </p>
+<p>
+  <strong>points_win:</strong>
+  <%= @tourney.points_win %>
+</p>
+<p>
+  <strong>points_tie:</strong>
+  <%= @tourney.points_tie %>
+</p>
+<p>
+  <strong>points_bye:</strong>
+  <%= @tourney.points_bye %>
+</p>
+<p>
+  <strong>Entrants:</strong>
+        <% if @entrants.present? %>
+          <%= @entrants.each do |p| %>
+          	<li> <%= p.name %> </li>
+          <% end %>
+        <% end %>
+</p>
 
 <%= link_to 'Edit', edit_tourney_path(@tourney) %> |
 <%= link_to 'Back', tourneys_path %>

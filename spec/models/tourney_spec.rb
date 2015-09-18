@@ -24,12 +24,10 @@ describe Tourney, type: :model do
 			players.each do |player| 
 				player.name = "bob#{i}"
 				player.email = "bob#{i}@amail.com"
-				puts player.inspect
 				tour.players << player
 				i += 1
 			end
-			puts tour.inspect
-		end
+\		end
 		it "initial matchup, odd number of players" do
 			players = FactoryGirl.build_stubbed_list(:player, 9)
 			i = 0

@@ -15,6 +15,23 @@ class TourneysController < ApplicationController
   # GET /tourneys/1
   # GET /tourneys/1.json
   def show
+    @tourney = Tourney.find(params[:id])
+    @entrants = @tourney.players()
+    @players_remaining = Player.all() - @entrants
+    @player_names = Player.pluck(:name)
+    @player_emails = Player.pluck(:email)
+    @players_remaining_names = @player_names - @tourney.players().pluck(:name)
+    @players_remaining_emails = @player_emails - @tourney.players().pluck(:email)
+    @entrant_names = ''
+    @entrant_emails = ''
+    @entrant_name_list = @tourney.players().pluck(:name)
+    @entrant_email_list = @tourney.players().pluck(:email)
+    @entrants.each do |entrant|
+      @entrant_names += entrant.name
+      @entrant_names += "\r\n"
+      @entrant_emails += entrant.email
+      @entrant_emails += "\r\n"
+    end
   end
 
   # GET /tourneys/new

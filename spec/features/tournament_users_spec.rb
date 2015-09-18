@@ -18,6 +18,7 @@ RSpec.feature "TournamentUsers", type: :feature do
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
       tour.save
       puts "user_id: #{user.id}"
+      puts "tourney user_id: #{tour.user_id}"
       visit tourneys_path
       expect(page).to have_text("mtg1")
       expect(page).to have_text("Brackets")
@@ -30,6 +31,7 @@ RSpec.feature "TournamentUsers", type: :feature do
       allow_any_instance_of(ApplicationController).to receive(:current_user).and_return(user)
       tour.save
       puts "user_id: #{user.id}"
+      puts "tourney user_id: #{tour.user_id}"
       visit tourneys_path
       expect(page).to have_text("mtg1")
       expect(page).to have_text("Brackets")

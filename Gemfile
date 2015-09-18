@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 #specify ruby version for Heroku
 ruby "2.2.0"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.0'
+gem 'rails', '>= 4.2.0'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -71,6 +71,7 @@ group :test do
   gem 'guard-spork'
   gem 'minitest-reporters', '1.0.5'
   gem 'mini_backtrace',     '0.1.3'
+  gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
 end
 

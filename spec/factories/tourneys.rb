@@ -8,6 +8,7 @@ FactoryGirl.define do
 	 	points_win 3
 	 	points_tie 1
 	 	points_bye 3
+	 	user_id 99
   		# association :user, factory: :user, strategy: :build
 	end 
 end
