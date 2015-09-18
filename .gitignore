@@ -21,7 +21,7 @@
 
 #ignore local environment settings
 /config/local_env.yml
-/config/secrets.yml
+#/config/secrets.yml.. with figaro, this should be checked in now.  And it should reference environment variables
 /config/settings.yml
 # Ignore application configuration
 /config/application.yml
