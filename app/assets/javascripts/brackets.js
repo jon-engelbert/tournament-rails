@@ -117,6 +117,7 @@ $(document).on ('ready page:load', function() {
     $('#player1_wins').val(match.player1_wins);
     $('#player2_wins').val(match.player2_wins);
     $('#ties').val(match.ties);
+    $('#match_id').val(match_id);
 
     $('#Edit_scores').show({positionTo: '#round_matches'});    
 		// $('#player1_name').text($(this).data('player1name') + " wins");
@@ -162,7 +163,7 @@ $(document).on ('ready page:load', function() {
     dialog.dialog( "close" );
     console.log(data);
     match_data = data;
-    $("#score_" + match_data["id"]).text(match["player1_score"]+ " - " + match_data["player2_score"] + "  (" + match_data["ties"] + ")  -- click to edit");
+    $("#score_" + match_data["id"]).text(match_data["player1_score"]+ " - " + match_data["player2_score"] + "  (" + match_data["ties"] + ")  -- click to edit");
     $("#score_" + match_data["id"]).data('player1wins', match_data["player1_score"]);
     $("#score_" + match_data["id"]).data('player2wins', match_data["player2_score"]);
     $("#score_" + match_data["id"]).data('ties', match_data["ties"]);
@@ -185,7 +186,8 @@ $(document).on ('ready page:load', function() {
     var ties = $("#ties").val();
     // $("#score_" + match_id).text(score1 + " - " + score2 + "  (" + ties + ")");
     e.preventDefault();
-    var promise = $.ajax({
+    // var promise = 
+    $.ajax({
       type: "POST",
       url: recordmatch_path,
       beforeSend: function(xhr) {
@@ -193,10 +195,12 @@ $(document).on ('ready page:load', function() {
       },
       data: JSON.stringify({ player1_wins: score1, player2_wins: score2, ties: ties, match_id: match_id, tourney_id: tourney_id, round: round}),
       dataType: 'json',
-      contentType: 'application/json'
+      contentType: 'application/json',
+      success: function (data) {updateScores(data);},
+      failure: function (data) {failUpdateScores(data);}
     });
-    promise.done(updateScores);
-    promise.fail(failUpdateScores);
+    // promise.done(updateScores(data));
+    // promise.fail(failUpdateScores);
   }
   
 	$("#Edit_scores").on("ajax:success", function (e, data, status, xhr) {

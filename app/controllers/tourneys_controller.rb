@@ -31,6 +31,7 @@ class TourneysController < ApplicationController
       @entrant_names += "\r\n"
       @entrant_emails += entrant.email
       @entrant_emails += "\r\n"
+      puts "entrant: #{entrant.name}, #{entrant.email}"
     end
   end
 

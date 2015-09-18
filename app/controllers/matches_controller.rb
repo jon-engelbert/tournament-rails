@@ -116,7 +116,7 @@ class MatchesController < ApplicationController
     end
     respond_to do |format|
       match_hash = match.as_json
-      puts "*********** Getting to end of record service, about to render JSON ***********"
+      puts "*********** Getting to end of record service, about to render JSON, #{match_hash}"
       format.json { render :json => match_hash.to_json }
       # format.json { render :json => {:what => 'ever'} }
     end

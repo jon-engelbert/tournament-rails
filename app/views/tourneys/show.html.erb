@@ -27,9 +27,10 @@
 <p>
   <strong>Entrants:</strong>
         <% if @entrants.present? %>
-          <%= @entrants.each do |p| %>
-          	<li> <%= p.name %> </li>
+          <% @entrants.each do |p| %>
+          	<li><%= p.name %>, <%=p.email %></li>
           <% end %>
+
         <% end %>
 </p>
 
